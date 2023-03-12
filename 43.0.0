@@ -1,0 +1,12 @@
+Collecting cython
+  Using cached Cython-0.29.33-py2.py3-none-any.whl (987 kB)
+Collecting oldest-supported-numpy
+  Using cached oldest_supported_numpy-2022.11.19-py3-none-any.whl (4.9 kB)
+Collecting setuptools
+  Using cached setuptools-67.5.1-py3-none-any.whl (1.1 MB)
+Collecting wheel
+  Using cached wheel-0.38.4-py3-none-any.whl (36 kB)
+Collecting numpy==1.19.3
+  Using cached numpy-1.19.3-cp39-cp39-win_amd64.whl (13.3 MB)
+Installing collected packages: wheel, setuptools, numpy, cython, oldest-supported-numpy
+Successfully installed cython-0.29.33 numpy-1.19.3 oldest-supported-numpy-2022.11.19 setuptools-67.5.1 wheel-0.38.4

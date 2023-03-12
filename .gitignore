@@ -1,6 +1,8 @@
 __pycache__
 datasets/
 models/__pycache__
+cam/__pycache__
+utils/__pycache__
 runs
 utils/__pycache__
 utils/wandb_logging/__pycache__
