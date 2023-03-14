@@ -19,6 +19,7 @@ yolov5_model = get_model()
 @app.route('/images', methods= ['POST'])
 def get_image():
     image = request.files["images"]
+    print(f'image:{image}')
     image_name = image.filename
     image.save(os.path.join(os.getcwd(), image_name))
     if image_name.split(".")[-1] in file_name:
@@ -31,10 +32,12 @@ def get_image():
             return Response(response=response, status=200, mimetype='image/jpg')
         except:
             return render_template('index1.html')
+
         
 @app.route('/')
 def upload_file():
    return render_template('index1.html')
+
 if __name__ == '__main__':
     #    Run locally
     app.run(debug=True, host='127.0.0.1', port=5000)

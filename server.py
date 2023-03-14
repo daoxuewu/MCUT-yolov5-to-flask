@@ -12,23 +12,29 @@ app=Flask(__name__,  static_folder='static', template_folder='templates') #__nam
 def gen_frames():
     # 選擇第1隻攝影機
     cap = cv2.VideoCapture(0)
-    while True:
-        # 先從 camera 擷取一幀又一幀的影像
-        success, frame = cap.read()
 
+    # 检查视频是否打开
+    if not cap.isOpened():
+        raise Exception("Could not open video file")
+    
+    while True:
+        # 先從 camera 擷取一幀又一幀的影像 Capture frame-by-frame
+        success, frame = cap.read()
+        
+        # 檢查視頻幀是否讀取成功
         if not success:
             break
         else: 
             # 因為opencv讀取的圖片並非jpeg格式，因此要用motion JPEG模式需要先將圖片轉碼成jpg格式圖片
-            ret, buffer = cv2.imencode('.jpg', frame)
+            success, buffer = cv2.imencode('.jpg', frame)
             frame = buffer.tobytes()
             # 使用generator函數輸出視頻流， 每次請求輸出的content類型是image/jpeg
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-    cap.release() #釋放攝影機
+    cap.release() #釋放視頻文件(攝影機)
     cv2.destroyAllWindows() #關閉所有opencv視窗
 
-
+# sildeShow用的生成函式
 def gen():
     i = 0
 
@@ -153,8 +159,10 @@ def camera():
 
     return render_template('camera.html')
 
-@app.route('/video_feed')  # 返回video streaming response
+# 返回video streaming response
+@app.route('/video_feed')
 def video_feed():
+    # 生成視頻流，使用的ContentType是multipart/x-mixed-replace，並且每一段數據用'--frame'來做分隔
     return Response(gen_frames(),mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
