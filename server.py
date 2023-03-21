@@ -4,6 +4,9 @@ import cv2
 import os
 import time
 
+from models.de import detect,get_model #測試
+yolov5_model = get_model() #測試
+
 app=Flask(__name__,  static_folder='static', template_folder='templates') #__name__ 代表目前執行的模組
 
 
@@ -25,6 +28,7 @@ def gen_frames():
         if not success:
             break
         else: 
+            frame = detect(yolov5_model,frame) #測試用
             # 因為opencv讀取的圖片並非jpeg格式，因此要用motion JPEG模式需要先將圖片轉碼成jpg格式圖片
             success, buffer = cv2.imencode('.jpg', frame)
             frame = buffer.tobytes()
