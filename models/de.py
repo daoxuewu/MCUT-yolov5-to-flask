@@ -60,10 +60,16 @@ def detect(model, im0s):
                                fast=True, classes=None, agnostic=False)
     for i, det in enumerate(pred):  # detections per image
         im0 = im0s
-        if det is not None and len(det):
+        if det is not None and len(det): #len(det)有值的話會是1
+            print(f'det 是 {det}') #測試用
             det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
+
+            # names是模組中預先定義好的類別名稱 cls是名稱的類別(型別值會是<class 'torch.Tensor'>類似1.0這種值) xyxy是tensor值 conf 是信任值 
             for *xyxy, conf, cls in det:
-                label = '%s%.2f' % (names[int(cls)], conf)
+                print(type(cls))
+                # print(f'names 是 {names},cls 是 {cls}, xyxy {xyxy}, conf信任值 {conf}, im0是 {im0}') #測試用
+                label = '%s%.2f' % (names[int(cls)], conf) #這裡會印出像without_mask0.49這樣的字串
+                # print(f'label 是 {label}') #測試用，印出檢測結果
                 im0 = plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=1)
     print('Done. (%.3fs)' % (time.time() - t0))
     return im0
