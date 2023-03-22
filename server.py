@@ -16,7 +16,7 @@ def gen_frames():
     # 選擇第1隻攝影機
     cap = cv2.VideoCapture(0)
 
-    # 检查视频是否打开
+    # 檢查視頻是否打開
     if not cap.isOpened():
         raise Exception("Could not open video file")
     
@@ -28,9 +28,9 @@ def gen_frames():
         if not success:
             break
         else: 
-            print(f"尚未通過偵測的frame{frame}") #測試用
+            # print(f"尚未通過偵測的frame{frame}") #測試用
             frame = detect(yolov5_model,frame) #測試用
-            print(f"測試用的frame{frame}")  #測試用
+            # print(f"測試用的frame{frame}")  #測試用
             # 因為opencv讀取的圖片並非jpeg格式，因此要用motion JPEG模式需要先將圖片轉碼成jpg格式圖片
             success, buffer = cv2.imencode('.jpg', frame)
             frame = buffer.tobytes()

@@ -13,8 +13,8 @@ html{
 /* background-image: linear-gradient(角度, 起始色彩 起始色彩位置, 結束色彩 結束色彩位置); */
 .bg-color-blue{  
   /* background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%); */
-  /* background-image: linear-gradient(-225deg, #20E2D7 0%, #F9FEA5 100%); */
-  background-image: linear-gradient(-225deg, #FF3CAC 0%, #562B7C 52%, #2B86C5 100%);
+  background-image: linear-gradient(-225deg, #20E2D7 0%, #F9FEA5 100%);
+  /* background-image: linear-gradient(-225deg, #FF3CAC 0%, #562B7C 52%, #2B86C5 100%); */
 }
 
 .link_btn{

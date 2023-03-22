@@ -844,16 +844,16 @@ def butter_lowpass_filtfilt(data, cutoff=1500, fs=50000, order=5):
 
 
 def cv2AddChineseText(img, text, position, textColor=(0, 255, 0), textSize=30):
-    if (isinstance(img, np.ndarray)):  # 判断是否OpenCV图片类型
+    if (isinstance(img, np.ndarray)):  # 判斷是否OpenCV圖片類型
         img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    # 创建一个可以在给定图像上绘图的对象
+    # 創建一个可以在給定圖像上繪圖的對象
     draw = ImageDraw.Draw(img)
-    # 字体的格式
+    # 字體的格式
     fontStyle = ImageFont.truetype(
         "simsun.ttc", textSize, encoding="utf-8")
-    # 绘制文本
+    # 繪製文本
     draw.text(position, text, textColor, font=fontStyle)
-    # 转换回OpenCV格式
+    # 轉換回OpenCV格式
     return cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
 
 def plot_one_box(x, img, color=None, label=None, line_thickness=None):
@@ -868,9 +868,9 @@ def plot_one_box(x, img, color=None, label=None, line_thickness=None):
         c2 = c1[0] + t_size[0], c1[1] - t_size[1] - 3
         cv2.rectangle(img, c1, c2, color, -1, cv2.LINE_AA)  # filled
         img = cv2AddChineseText(img, label, (c1[0], c1[1] - 14), textColor=(255, 255, 255), textSize=15)
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        cv2.putText(img,"YOLO v5  by HuBin",(40,40),font, 0.1, (0, 255, 0), 1)
-        # cv2.putText(img, label, (c1[0], c1[1] - 2), 0, tl / 3, [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
+        # font = cv2.FONT_HERSHEY_SIMPLEX # 原作者放的字
+        # cv2.putText(img,"YOLO v5  by HuBin",(40,40),font, 0.1, (0, 255, 0), 1) # 原作者放的字
+        # cv2.putText(img, label, (c1[0], c1[1] - 2), 0, tl / 3, [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA) 
 
     return img
 
