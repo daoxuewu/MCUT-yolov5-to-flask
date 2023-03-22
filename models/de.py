@@ -46,7 +46,8 @@ def detect(model, im0s):
     t0 = time.time()
     device = torch.device("cuda" if (torch.cuda.is_available()) else "cpu")
     names = model.names if hasattr(model, 'names') else model.modules.names
-    colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
+    # colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))] #原作者隨機生成的顏色
+    # print(f"共有{colors}這些顏色") # 測試用
     img = letterbox(im0s, new_shape=640)[0]
     img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
     img = np.ascontiguousarray(img)
@@ -70,6 +71,7 @@ def detect(model, im0s):
                 label = '%s%.2f' % (names[int(cls)], conf) #先把cls轉成整數之後從names串列裡面選出名字，這裡會印出像without_mask0.49這樣的字串
                 ### 這裡要累加 conf 的值然後算平均判斷這個人是否真的有戴口罩
                 print(f'偵測到label --> {label}') #測試用，印出檢測結果
-                im0 = plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=2)
+                # im0 = plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=2) #原作者畫框框的函式
+                im0 = plot_one_box(xyxy, im0, label=label, color=[108, 96, 244], line_thickness=2) #測試用，改框框顏色這裡是BGR不是RGB!!
     print('Done. (%.3fs)' % (time.time() - t0))
     return im0

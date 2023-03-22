@@ -4,8 +4,13 @@
 
 {% block main %}
 
-    <h1 class="title">Camera Live Streaming</h1>
-    <img src="{{ url_for('video_feed') }}" alt="影像" style="display:block; margin:auto;">
-    <button type="button" class="btn btn-dark btn-lg">Start</button>
 
+    <div class="text-center mt-5">
+        <h1 class="title">Camera Live Streaming</h1>
+        <img src="{{ url_for('video_feed') }}" alt="影像" style="display:block; margin:auto;">
+        <br>
+
+        
+        <button type="button" class="btn btn-dark btn-lg">Start</button>
+    </div>
 {% endblock %}
