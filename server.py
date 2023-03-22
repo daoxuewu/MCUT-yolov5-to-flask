@@ -106,12 +106,12 @@ def drop_table():
     cursor.close()
     return "drop success!!"
 
-@app.route('/form')
-def form():
-    return render_template('form.html')
+@app.route('/login_page')
+def login_page():
+    return render_template('login_page.html')
  
-@app.route('/login', methods = ['POST', 'GET'])
-def login():
+@app.route('/user_signup', methods = ['POST', 'GET'])
+def user_signup():
     if request.method == 'GET':
         return "Login via the login Form"
      
@@ -127,6 +127,15 @@ def login():
         cursor.close()
 
         return f"login success!! your name is {user_name}"
+
+# 管理員登入表單
+@app.route("/user_signin",methods=["POST"])
+def user_signin():
+    #從前端取得使用者的輸入
+    admin_account=request.form["adminAccount"]
+    # admin_password=request.form["adminPassword"]
+    
+    return  f"login success!! your account is {admin_account}"
 
 @app.route('/show')
 def show():

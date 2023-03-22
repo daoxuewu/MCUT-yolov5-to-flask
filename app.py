@@ -33,9 +33,10 @@ def get_image():
         except:
             return render_template('index1.html')
         
+#YoloV5測試用頁面
 @app.route('/')
 def upload_file():
-   return render_template('index1.html')
+   return render_template('test_page.html')
 
 if __name__ == '__main__':
     #    Run locally

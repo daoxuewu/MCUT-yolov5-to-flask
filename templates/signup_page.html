@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}signup page{% endblock %}
+
+{% block main %}
+
+
+<form action="{{ url_for('user_signup') }}" method = "POST">
+    <p>school_id <input type = "text" name = "school_id" /></p>
+    <p>user_name <input type = "text" name = "user_name" /></p>
+    <p>email <input type = "text" name = "email" /></p>
+    <p>password <input type = "text" name = "password" /></p>
+    <p><input type = "submit" value = "Submit" /></p>
+ </form>
+
+ {% endblock %}

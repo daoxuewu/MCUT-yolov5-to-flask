@@ -61,7 +61,7 @@ def detect(model, im0s):
     for i, det in enumerate(pred):  # detections per image
         im0 = im0s
         if det is not None and len(det): #len(det)有值的話會是1
-            print(f'det 是 {det}') #測試用
+            # print(f'det 是 {det}') #測試用
             det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round() #a[row,col] --> a[start:end, start:end]  reference : https://stackoverflow.com/a/57872912
 
             # names是模組中預先定義好的類別名稱 cls是名稱的類別(型別值會是<class 'torch.Tensor'>類似1.0這種值) xyxy是tensor值 conf 是信任值 
@@ -69,7 +69,7 @@ def detect(model, im0s):
                 # print(f'names 是 {names},cls 是 {cls}, xyxy {xyxy}, conf信任值 {conf}, im0是 {im0}') #測試用
                 label = '%s%.2f' % (names[int(cls)], conf) #先把cls轉成整數之後從names串列裡面選出名字，這裡會印出像without_mask0.49這樣的字串
                 ### 這裡要累加 conf 的值然後算平均判斷這個人是否真的有戴口罩
-                # print(f'label 是 {label}') #測試用，印出檢測結果
+                print(f'偵測到label --> {label}') #測試用，印出檢測結果
                 im0 = plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=2)
     print('Done. (%.3fs)' % (time.time() - t0))
     return im0

@@ -1,14 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Index page{% endblock %}
+
+{% block main %}
     <h1>Hello World !!</h1>
-    <a href="{{ url_for('form') }}">click here login</a><br/>
+    <a href="{{ url_for('login_page') }}">click here login</a><br/>
     <a href="{{ url_for('show') }}">show img</a><br/>
     <a href="{{ url_for('camera') }}">show camera streaming</a>
     
@@ -17,8 +13,5 @@
 
     <h1>slideshow</h1>
     <img src="{{ url_for('slideshow') }}" style='width: 50%; height: 50%;'/>
-    </body>
-    </html>
     
-</body>
-</html>
+{% endblock %}
