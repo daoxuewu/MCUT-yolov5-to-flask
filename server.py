@@ -78,9 +78,10 @@ def index():
     # jinja2模板
     return render_template("index.html") #函式回傳的內容
 
-@app.route("/test")
-def test():
-    return url_for('index',_external=True)
+# 讓使用者登入後快速開始的頁面
+@app.route("/quick_start")
+def quick_start():
+    return render_template("quick_start.html")
 
 @app.route('/create_table')
 def create_table():

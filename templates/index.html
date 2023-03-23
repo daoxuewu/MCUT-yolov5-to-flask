@@ -3,15 +3,35 @@
 {% block title %}Index page{% endblock %}
 
 {% block main %}
-    <h1>Hello World !!</h1>
+    <!-- <h1>Hello World !!</h1> -->
+{#
     <a href="{{ url_for('login_page') }}">click here login</a><br/>
     <a href="{{ url_for('show') }}">show img</a><br/>
-    <a href="{{ url_for('camera') }}">show camera streaming</a>
+    <a href="{{ url_for('camera') }}">show camera streaming</a><br/>
+    <a href="{{ url_for('quick_start') }}">Quick Start</a>
+#}
+{#
+    <h3>Pictures Streaming</h3>
+    <img src="{{ url_for('video_feed') }}">
+#}
+    <!-- <h1>slideshow</h1> -->
+    <!-- <img src="{{ url_for('slideshow') }}" style='width: 50%; height: 50%;'/> -->
     
-    <!-- <h3>Pictures Streaming</h3>
-    <img src="{{ url_for('video_feed') }}"> -->
+    {# source https://bootstrap5.hexschool.com/docs/5.0/examples/heroes/ #}
+    <div class="bg-dark text-secondary px-4 py-5 text-center">
+        <div class="py-5">
+          <h1 class="display-5 fw-bold text-white">Mask Detect System.</h1>
+          <div class="col-lg-6 mx-auto">
+            <p class="fs-5 mb-4">這個專題是使用 python 編寫的輕量級網頁框架 flask 結合 yolov5 lite 訓練出的 model 進行實時的影像辨識使用者有無穿戴口罩，歡迎來體驗。</p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold" href="{{ url_for('camera') }}" role="button">快速開始</a>
+                <!-- <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">快速開始</button> -->
+                <a class="btn btn-outline-light btn-lg px-4" href="{{ url_for('login_page') }}" role="button">登入帳號</a>
+                <!-- <button type="button" class="btn btn-outline-light btn-lg px-4">登入帳號</button> -->
+            </div>
+          </div>
+        </div>
 
-    <h1>slideshow</h1>
-    <img src="{{ url_for('slideshow') }}" style='width: 50%; height: 50%;'/>
+    </div>
     
 {% endblock %}
