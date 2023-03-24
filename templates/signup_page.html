@@ -4,13 +4,27 @@
 
 {% block main %}
 
-
+<div class="text-center mt-5">
+    <form style="max-width:300px;margin:auto;" action="{{ url_for('user_signup') }}" method="POST">
+        <p class="font-weight-bold">請填寫您的相關資訊，以完成帳號註冊</p>
+        <input type="text" name="school_id" id="school_id" class="form-control form-control-lg mb-3" placeholder="您的學號" required>
+        <input type="text" name="user_name" id="user_name" class="form-control form-control-lg mb-3" placeholder="您的姓名" required>
+        <input type="email" name="email" id="email" class="form-control form-control-lg mb-3" placeholder="您的電子郵件地址" required>
+        <input type="password" name="password" id="password" class="form-control form-control-lg mb-3" placeholder="密碼(最小長度6個字元)" required minlength="6" maxlength="128"> 
+        <input type="password" name="confirmPassword" id="confirmPassword" class="form-control form-control-lg" placeholder="確認密碼(請再次輸入)" required minlength="6" maxlength="128" 
+        oninput="setCustomValidity('');" onchange="if(document.getElementById('password').value != document.getElementById('confirmPassword').value){setCustomValidity('密碼不一致');}"/>
+        <div class="mt-3">
+            <button class="w-100 mt-3 btn btn-lg btn-light btn-block" type="submit">確定並送出</button>
+        </div>   
+    </form>
+</div>
+<!-- 
 <form action="{{ url_for('user_signup') }}" method = "POST">
     <p>school_id <input type = "text" name = "school_id" /></p>
     <p>user_name <input type = "text" name = "user_name" /></p>
     <p>email <input type = "text" name = "email" /></p>
     <p>password <input type = "text" name = "password" /></p>
     <p><input type = "submit" value = "Submit" /></p>
- </form>
+ </form> -->
 
  {% endblock %}

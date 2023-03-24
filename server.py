@@ -24,8 +24,9 @@ def gen_frames():
         # 先從 camera 擷取一幀又一幀的影像 Capture frame-by-frame
         success, frame = cap.read()
         
-        # 檢查視頻幀是否讀取成功
+        # 檢查視頻幀是否讀取成功 if frame is read correctly success(ret) is True
         if not success:
+            print("Can't not receive frame")
             break
         else: 
             # print(f"尚未通過偵測的frame{frame}") #測試用
@@ -84,6 +85,16 @@ def index():
 def quick_start():
     return render_template("quick_start.html")
 
+# 讓使用者登入後查看歷史紀錄的頁面
+@app.route("/history")
+def history():
+    return render_template("history.html")
+
+# 關於我們(寫專案的介紹或是開發者的介紹)
+@app.route("/about_us")
+def about_us():
+    return render_template("about_us.html")
+
 #YoloV5只傳圖片測試用頁面
 @app.route('/test_page')
 def test_page():
@@ -140,20 +151,21 @@ def login_page():
 @app.route('/user_signup', methods = ['POST', 'GET'])
 def user_signup():
     if request.method == 'GET':
-        return "Login via the login Form"
+        return render_template('signup_page.html')
      
     if request.method == 'POST':
         school_id = request.form['school_id']
         user_name = request.form['user_name']
         email = request.form['email']
         password = request.form['password']
-        cursor = mysql.connection.cursor()
+        # cursor = mysql.connection.cursor()
         print(school_id,user_name,email,password)
-        cursor.execute("INSERT INTO user_data (school_id, user_name, email, password) VALUES (%s,%s,%s,%s);",(school_id, user_name, email ,password))
-        mysql.connection.commit()
-        cursor.close()
+        # 資料庫的東西暫時先拿掉
+        # cursor.execute("INSERT INTO user_data (school_id, user_name, email, password) VALUES (%s,%s,%s,%s);",(school_id, user_name, email ,password))
+        # mysql.connection.commit()
+        # cursor.close()
 
-        return f"login success!! your name is {user_name}"
+        return f"signup success!! your name is {user_name}"
 
 # 管理員登入表單
 @app.route("/user_signin",methods=["POST"])
@@ -177,27 +189,7 @@ def slideshow():
 
 @app.route('/camera')
 def camera():
-    # 在某些情況下網路攝影機可能不會自動打開，這樣的程式執行後就會出錯，若遇到這種狀況的話可以用 cap.isOpened() 檢查攝影機是否有啟動，若沒有啟動則呼叫 cap.open() 啟動它 https://blog.gtwang.org/programming/opencv-webcam-video-capture-and-file-write-tutorial/
-    # while cap.isOpened():
-    #     ret, frame = cap.read()
-    #     # if frame is read correctly ret is True
-    #     if not ret:
-    #         print("Can't receive frame (stream end?). Exiting ...")
-    #         break
 
-    #     # 彩色轉灰階
-    #     # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    #     # 顯示圖片
-    #     # cv2.imshow('frame', gray)
-    #     cv2.imshow('frame',frame)
-
-    #     # 若按下q鍵則離開迴圈
-    #     if cv2.waitKey(1) == ord('q'):
-    #         break
-    # # 釋放該攝影機裝置
-    # cap.release()
-    # # 關閉所有 OpenCV 視窗
-    # cv2.destroyAllWindows()
 
     return render_template('camera.html')
 
