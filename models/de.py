@@ -72,7 +72,7 @@ def detect(model, im0s):
                 ### 這裡要累加 conf 的值然後算平均判斷這個人是否真的有戴口罩
                 print(f'偵測到label --> {label}') #測試用，印出檢測結果
                 # im0 = plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=2) #原作者畫框框的函式
-                if r'with_mask' in label: #with_mask : 綠色, without_mask : 紅色, mask_weared_incorrect : 顯示黃色
+                if r'with_mask' in label: #with_mask : 綠色, mask_weared_incorrect : 顯示黃色, without_mask : 紅色
                     im0 = plot_one_box(xyxy, im0, label=label, color=[88, 128, 71], line_thickness=2) #測試用，改框框顏色這裡是BGR不是RGB!!
                 elif r'mask_weared_incorrect' in label:
                     im0 = plot_one_box(xyxy, im0, label=label, color=[0, 244, 249], line_thickness=2) #測試用，改框框顏色這裡是BGR不是RGB!!
