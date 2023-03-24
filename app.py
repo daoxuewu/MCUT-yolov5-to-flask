@@ -31,7 +31,7 @@ def get_image():
         try:
             return Response(response=response, status=200, mimetype='image/jpg')
         except:
-            return render_template('index1.html')
+            return render_template('test_page.html')
         
 #YoloV5測試用頁面
 @app.route('/')

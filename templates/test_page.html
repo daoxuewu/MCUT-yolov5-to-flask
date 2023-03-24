@@ -1,18 +1,15 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <link rel='stylesheet' href='../static/css/style1.css'>
-  <script src='../static/js/client.js'></script>
-  <title>yolo deepsort</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}yolo deepsort{% endblock %}
+
+{% block styles %}  
+<link rel='stylesheet' href="{{ url_for('static', filename='css/test_page.css') }}">
+<script src='../static/js/client.js'></script>
+{% endblock %}
+
+{% block main %}
+
+{#
   <div class="container">
     <nav class="navbar navbar-expand-sm bg-primary navbar-dark justify-content-center">
       <ul class="navbar-nav">
@@ -22,12 +19,17 @@
       </ul>
     </nav>
   </div>
+#}
+
+
+<!-- 主程式開始 -->
 <div>
   <div class='center'>
-    <div class='title'>Target Detection and Multi-Target Tracking Platform</div>
+    <div class='title text-white'>Target Detection and Multi-Target Tracking Platform</div>
+    <p class="fs-5 mb-1 text-white-50">YoloV5 測試用頁面</p>
     <div class='content'>
       <div class='no-display'>
-      <form action = "/images" method = "POST"
+      <form action = "{{ url_for('get_image') }}" method = "POST"
          enctype = "multipart/form-data">
          <input id='file-input'
                class='no-display'
@@ -36,7 +38,7 @@
                accept='image/png,image/jpeg,image/jpg,video/mp4,video/avi'
                onchange='showPicked(this)'>
       </div>
-      <button class='choose-file-button' type='button' onclick='showPicker()'>Upload file</button>
+      <button class='btn btn-outline-warning' type='button' onclick='showPicker()'>Upload file</button>
       <div class='upload-label'>
         <label id='upload-label'>No file chosen</label>
       </div>
@@ -45,11 +47,11 @@
         <video autoplay="autoplay" id='image-picked1' class='no-display' alt='Chosen Image' height='250'>
       </div>
       <div class='analyze'>
-        <button id="analyze-button" class="analyze-button" type = "submit">Analyze</button>
+        <button id="analyze-button" class="btn btn-warning btn-lg" type = "submit">Analyze</button>
       </div>
       </form>
     </div>
   </div>
 </div>
-</body>
-</html>
+
+{% endblock %}

@@ -59,6 +59,7 @@ def gen():
 
 def get_all_images():
     image_folder = 'D:\\mcut_project\\static\\img\\train'
+    # image_folder = {{ url_for('static', filename='img\\train') }}
     images = [img for img in os.listdir(image_folder)
               if img.endswith(".jpg") or
               img.endswith(".jpeg") or
@@ -82,6 +83,31 @@ def index():
 @app.route("/quick_start")
 def quick_start():
     return render_template("quick_start.html")
+
+#YoloV5只傳圖片測試用頁面
+@app.route('/test_page')
+def test_page():
+   return render_template('test_page.html')
+
+# 測試用頁面接收圖片的路由
+class_names = [c.strip() for c in open(r'cam/coco.names').readlines()]
+file_name = ['jpg','jpeg','png']
+@app.route('/get_image', methods= ['POST'])
+def get_image():
+    image = request.files["images"]
+    print(f'image:{image}')
+    image_name = image.filename
+    image.save(os.path.join(os.getcwd(), image_name))
+    if image_name.split(".")[-1] in file_name:
+        img = cv2.imread(image_name)
+        img = detect(yolov5_model,img)
+        _, img_encoded = cv2.imencode('.jpg', img)
+        response = img_encoded.tobytes()
+        os.remove(image_name)
+        try:
+            return Response(response=response, status=200, mimetype='image/jpg')
+        except:
+            return render_template('test_page.html')
 
 @app.route('/create_table')
 def create_table():

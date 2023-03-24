@@ -3,6 +3,7 @@
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
+  <!-- Responsive Web Design -->
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
@@ -18,11 +19,43 @@
 <body class="text-white bg-dark" {% block body %}{% endblock %}>
   
     <!-- 希望能固定出現在每個網頁的 nav(尚未添加) -->
+    {% block navbar %}{% endblock %}
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+      <div class="container-fluid">
+
+        <!-- 宣告一個可折疊的按鈕 mobile version -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- desktop version -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <a class="navbar-brand">
+            <img src="{{ url_for('static', filename='img/face_mask.svg') }}" alt="" width="30" height="24" class="d-inline-block align-text-top">
+            <!-- 首頁 -->Mask Detection
+          </a>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><!-- 歷史紀錄 -->History</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><!-- 關於我們 -->About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('test_page') }}"><!-- 測試用頁面 -->開發人員測試用</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
 
 
   {# <!-- Convenience block inside the body. Put stuff here. --> #}
-  {% block content %}
-  {% endblock %}
+  {% block content %}{% endblock %}
 
   <main>
     {# <!-- 可供更改的部分 --> #}
@@ -30,8 +63,8 @@
   </main>
 
   <!-- 希望能固定出現在每個網頁的 footer(尚未添加) https://ithelp.ithome.com.tw/articles/10267476 -->
-  <footer class="mt-auto text-center text-white-50">
-    <p>明志科大畢業專題, by <a class="text-white">吳家豪、江易澤、林承旭</a>{# <a href="#" class="text-white">吳家豪、江易澤、林承旭</a> #}.</p>
+  <footer class="fixed-bottom text-center text-white-50">
+    <p>明志科大畢業專題{#, by <a class="text-white">吳家豪、江易澤、林承旭</a> <a href="#" class="text-white">吳家豪、江易澤、林承旭</a>.#}</p>
   </footer>
 
   {#<!-- Import Bootstrap bundle -->#}
