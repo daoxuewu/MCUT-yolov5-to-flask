@@ -89,20 +89,20 @@ def quick_start():
 @app.route("/history")
 def history():
     # 顯示在歷史紀錄頁面table中的資料
-    alert_history_data = [] 
+    detection_history_data = [] 
 
     #測試資料(之後會改從資料庫裡撈)
-    test_data = [["學生", "吳家豪", "with_mask", "2023-03-24 14:18:03"], 
-                 ["學生", "彭于晏", "mask_weared_incorrect", "2023-03-24 14:18:03"], 
-                 ["學生", "周杰倫", "without_mask", "2023-03-24 14:18:03"], 
-                 ["學生", "林俊傑", "with_mask", "2023-03-24 14:18:03"]
+    test_data = [["學生", "吳家豪", "with_mask", "2023-03-23 09:18:03"], 
+                 ["訪客", "彭于晏", "mask_weared_incorrect", "2023-03-24 14:18:03"], 
+                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"], 
+                 ["學生", "林俊傑", "with_mask", "2023-03-24 21:53:06"]
     ]
 
     # 歷史紀錄 table 的標題
     history_page_headings = ["身份", "姓名", "狀態", "偵測時間"]
 
     # return render_template('alert_history.html',history_page_headings=history_page_headings,python_alert_history_data=alert_history_data)
-    return render_template("history.html",history_page_headings=history_page_headings, python_alert_history_data=test_data)
+    return render_template("history.html",history_page_headings=history_page_headings, test_data=test_data)
 
 
 
