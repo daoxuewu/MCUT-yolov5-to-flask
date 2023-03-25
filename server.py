@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request , render_template, Response, url_for
 #from flask_mysqldb import MySQL
 import cv2
@@ -35,9 +36,7 @@ def gen_frames():
             print("Can't not receive frame")
             break
         else: 
-            # print(f"尚未通過偵測的frame{frame}") #測試用
             frame = detect(yolov5_model,frame) #測試用
-            # print(f"測試用的frame{frame}")  #測試用
             # 因為opencv讀取的圖片並非jpeg格式，因此要用motion JPEG模式需要先將圖片轉碼成jpg格式圖片
             success, buffer = cv2.imencode('.jpg', frame)
             frame = buffer.tobytes()
@@ -95,7 +94,11 @@ def history():
     test_data = [["學生", "吳家豪", "with_mask", "2023-03-23 09:18:03"], 
                  ["訪客", "彭于晏", "mask_weared_incorrect", "2023-03-24 14:18:03"], 
                  ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"], 
-                 ["學生", "林俊傑", "with_mask", "2023-03-24 21:53:06"]
+                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
+                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
+                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
+                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
+                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"]
     ]
 
     # 歷史紀錄 table 的標題
@@ -136,6 +139,23 @@ def get_image():
             return Response(response=response, status=200, mimetype='image/jpg')
         except:
             return render_template('test_page.html')
+
+# 按下開始偵測後會打到這個路由
+@app.route('/detect_mask', methods= ['POST'])
+def detect_mask():
+    # 前端傳過來的資料
+    data = request.form.get("mydata")
+    print(f'前端傳來的資料是 ==> {data}')
+    if data == "有戴":
+        word = "success"
+    else:
+        word = "danger"
+
+    data = {"trans":"132","word": word}
+    # data = json.dumps(data)
+    print(data)
+    time.sleep(5)
+    return data
 
 @app.route('/create_table')
 def create_table():
@@ -211,8 +231,20 @@ def camera():
     return render_template('camera.html')
 
 # 返回video streaming response
-@app.route('/video_feed')
+@app.route('/video_feed', methods = ['POST', 'GET'])
 def video_feed():
+    # 前端傳過來的資料
+    # 這段程式會出問題
+    # data = request.args.get("mydata")
+    # print(f'前端傳來的資料是 ==> {data}')
+    # # 如果使用者按下開始偵測就觸發
+    # if data == "有按":
+    #     print("有按!!!!!!!!!!!!!!!!!!!!!!")
+    #     generation_ = gen_frames()
+    # else:
+    #     print("沒有按!!!!!!!!!!!!!!!!!!!!!!")
+    #     generation_ = gen_frames()
+    # 沒有按下的話照舊
     # 生成視頻流，使用的ContentType是multipart/x-mixed-replace，並且每一段數據用'--frame'來做分隔
     return Response(gen_frames(),mimetype='multipart/x-mixed-replace; boundary=frame')
 

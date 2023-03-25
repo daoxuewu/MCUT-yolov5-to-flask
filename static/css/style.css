@@ -38,7 +38,7 @@ html{
   color: #333333;
 }
 
-.table {
+/* .table {
   border-spacing: 0;
   margin: 1rem;
   background-color: #f5f5f5;
@@ -54,7 +54,7 @@ html{
 
 .talbe_cell {
   padding: 8px;
-}
+} */
 
 /* ref: https://roykwokcode.medium.com/css-%E5%B8%B8%E7%94%A8%E4%BD%88%E5%B1%80%E5%AF%A6%E7%8F%BE%E6%96%B9%E5%BC%8F-50c4fcfb758a */
 .container{
