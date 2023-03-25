@@ -10,6 +10,12 @@ yolov5_model = get_model() #測試
 app=Flask(__name__,  static_folder='static', template_folder='templates') #__name__ 代表目前執行的模組
 
 
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'zxcvbnm987'
+app.config['MYSQL_DB'] = 'flask'
+ 
+#mysql = MySQL(app)
 
 # 網頁串流
 def gen_frames():
@@ -67,12 +73,6 @@ def get_all_images():
               img.endswith("png")]
     return images
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'zxcvbnm987'
-app.config['MYSQL_DB'] = 'flask'
- 
-#mysql = MySQL(app)
 
 @app.route("/") #透過 decorater 定義路由並以函式為基礎提供附加功能
 @app.route("/index")
@@ -182,7 +182,7 @@ def user_signup():
         # mysql.connection.commit()
         # cursor.close()
 
-        return f"signup success!! your name is {user_name}"
+        return f"<h1>signup success!! your name is {user_name}</h1>"
 
 # 管理員登入表單
 @app.route("/user_signin",methods=["POST"])

@@ -26,9 +26,9 @@
             <p class="fs-5 mb-4">這個專題是使用 python 編寫的輕量級網頁框架 flask 結合 yolov5 lite 訓練出的 model 進行實時的影像辨識使用者有無穿戴口罩，有戴口罩外框會顯示綠色，沒戴好口罩會顯示黃色，沒戴口罩會顯示紅色，歡迎來體驗。</p>
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                 <a class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold" href="{{ url_for('camera') }}" role="button">快速開始</a>
-                <!-- <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">快速開始</button> -->
+                {#<!-- <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">快速開始</button> -->#}
                 <a class="btn btn-outline-light btn-lg px-4" href="{{ url_for('login_page') }}" role="button">登入帳號</a>
-                <!-- <button type="button" class="btn btn-outline-light btn-lg px-4">登入帳號</button> -->
+                {#<!-- <button type="button" class="btn btn-outline-light btn-lg px-4">登入帳號</button> -->#}
             </div>
           </div>
         </div>
@@ -36,7 +36,5 @@
     </div>
     
 
-    <footer class="fixed-bottom text-center text-white-50">
-        <p>明志科大畢業專題</p>
-    </footer>
+
 {% endblock %}

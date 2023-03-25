@@ -62,22 +62,24 @@
             <strong>沒有戴口罩!</strong>
             </div>
         </div>
+        {#
         <div class="d-flex justify-content-center container-fluid">
             <!-- <div class="btn btn-primary m-4">即時影像</div> -->
             <img src="{{ url_for('video_feed') }}" alt="Camera Live Streaming 即時影像" style="display:block; margin:auto;">
         </div>
+        #}
         <!-- 640*480 -->
-        <!-- <img src="{{ url_for('video_feed') }}" alt="Camera Live Streaming 即時影像" style="display:block; margin:auto;"> -->
-        <br>
+        <img src="{{ url_for('video_feed') }}" alt="Camera Live Streaming 即時影像" class="rounded mx-auto d-block">
+        <!-- <br> -->
         
-        <button type="button" class="btn btn-light btn-lg" id="start_btn">開始偵測</button>
+        <button type="button" class="btn btn-light btn-lg mt-2 fw-bold" id="start_btn">開始偵測</button>
 {# 
         <button type="button" class="btn btn-success btn-lg" id="with_mask">有戴</button>
         <button type="button" class="btn btn-warning btn-lg" id="mask_weared_incorrect">沒戴好</button>
         <button type="button" class="btn btn-danger btn-lg" id="without_mask">沒戴</button>
 #}    
     </div>
-</br>
+<!-- </br> -->
 {% endblock %}
 
 {% block script %}
