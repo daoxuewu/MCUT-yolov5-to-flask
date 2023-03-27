@@ -5,7 +5,7 @@
 {% block main %}
     <!-- <h1>Hello World !!</h1> -->
 {#
-    <a href="{{ url_for('login_page') }}">click here login</a><br/>
+    <a href="{{ url_for('login') }}">click here login</a><br/>
     <a href="{{ url_for('show') }}">show img</a><br/>
     <a href="{{ url_for('camera') }}">show camera streaming</a><br/>
     <a href="{{ url_for('quick_start') }}">Quick Start</a>
@@ -27,7 +27,7 @@
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                 <a class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold" href="{{ url_for('camera') }}" role="button">快速開始</a>
                 {#<!-- <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">快速開始</button> -->#}
-                <a class="btn btn-outline-light btn-lg px-4" href="{{ url_for('login_page') }}" role="button">登入帳號</a>
+                <a class="btn btn-outline-light btn-lg px-4" href="{{ url_for('login') }}" role="button">登入帳號</a>
                 {#<!-- <button type="button" class="btn btn-outline-light btn-lg px-4">登入帳號</button> -->#}
             </div>
           </div>

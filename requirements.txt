@@ -28,6 +28,10 @@ pandas
 thop  # FLOPS computation
 pycocotools>=2.0  # COCO mAP
 
+# Flask
+Flask==2.2.3
+Flask-Login==0.6.2
+
 
 ## pip freeze > requirements.txt 出來的結果
 

@@ -66,7 +66,7 @@
                 <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarDarkDropdownMenuLink">
                   <li><a class="dropdown-item" href="{{ url_for('test_page') }}"><!-- 測試用頁面 -->開發人員測試頁面</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('test_stream') }}">測試串流</a></li>
-                  <li><a class="dropdown-item" href="#">登出帳號</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('logout') }}">登出帳號</a></li>
                 </ul>
               </li>
           </ul>
@@ -74,8 +74,22 @@
         <!-- 右邊結束 -->
       </div>
     </nav>
-
-
+    
+    {#<!-- 為了秀出 flex message 用的 ref: https://flask.palletsprojects.com/en/2.2.x/patterns/flashing/ -->#}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <!-- 這裡還可以在調整成讓使用者可以關閉的版本會更好 -->
+    <div class="text-center mt-auto container-fluid">
+      <div class="alert alert-primary d-flex justify-content-center"  role="alert">
+        <ul class=flashes>
+        {% for category, message in messages %}
+        <strong><li class="{{ category }}" style="list-style: none;">{{ message }}</li></strong>
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+    {% endwith %}
 
   {# <!-- Convenience block inside the body. Put stuff here. --> #}
   {% block content %}{% endblock %}

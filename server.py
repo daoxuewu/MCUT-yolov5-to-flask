@@ -1,22 +1,71 @@
-import json
-from flask import Flask, request , render_template, Response, url_for
-#from flask_mysqldb import MySQL
+from flask import Flask, request , render_template, Response, url_for, redirect, flash
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+# from flask_mysqldb import MySQL
 import cv2
 import os
 import time
+import configparser
+# import json
 
 from models.de import detect,get_model, test_detect #測試
 yolov5_model = get_model() #測試
 
+# config 初始化
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+# Flask 初始化
 app=Flask(__name__,  static_folder='static', template_folder='templates') #__name__ 代表目前執行的模組
+app.secret_key = config.get('flask', 'secret_key') # 設定 flask 的密鑰secret_key。要先替 flask 設定好secret_key，Flask-Login 才能運作。
 
-
+# MYSQL 資料庫初始化
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'zxcvbnm987'
 app.config['MYSQL_DB'] = 'flask'
  
 #mysql = MySQL(app)
+
+# users 使用者清單 定義一個使用者清單，'Me'是帳號(或說是使用者名稱)，這個帳號的密碼是'myself'。這當然是一個簡單的設定方式。喜歡的話也可以在 Heroku Postgres 上另外做一個表單(table)，並將使用者資料存放在那邊。
+users = {'Justin': {'password': '12345678'}}
+
+# Flask-Login 初始化
+login_manager = LoginManager() # 產生一個LoginManager()物件來初始化 Flask-Login
+login_manager.init_app(app) # 將 flask 和 Flask-Login 綁定起來
+login_manager.session_protection = "strong" # 將session_proctection調整到最強。預設是"basic"，也會有一定程度的保護，所以這行可選擇不寫上去。
+login_manager.login_view = 'login' # 當使用者還沒登入，卻請求了一個需要登入權限才能觀看的網頁時，我們就先送使用找到login_view所指定的位置來。以這行程式碼為例，當未登入的使用者請求了一個需要權限的網頁時，就將他送到代表login()的位址去。我們現在還沒寫出login()這個函數，所以等等要補上。
+login_manager.login_message = '請先登入才能使用此功能' # login_message是和login_view相關的設定，當未登入的使用者被送到login_view所指定的位址時，會一併跳出的訊息。
+
+# 宣告我們要借用 Flask-Login 提供的類別UserMixin，並放在User這個物件上。但其實這裡沒有對UserMixin做出任何更動，因此下面那行程式碼用個pass就行。
+class User(UserMixin):
+    pass
+
+# 做一個驗證使用者是否登入的user_loader()。下面的程式碼基本上就是確認使用者是否是在我們的合法清單users當中，若沒有，就什麼都不做。若有，就宣告一個我們剛才用UserMixin做出來的物件User()，貼上user標籤，並回傳給呼叫這個函數user_loader()的地方。
+@login_manager.user_loader
+def user_loader(userAccount):
+    if userAccount not in users:
+        return
+
+    user = User()
+    user.id = userAccount
+    return user
+
+# 做一個從flask.request驗證使用者是否登入的request_loader()。下面的程式碼基本上就是確認使用者是否是在我們的合法清單users當中，若沒有，就什麼都不做。若有，就宣告一個我們剛才用UserMixin做出來的物件User()，貼上user標籤，並回傳給呼叫這個函數request_loader()的地方。並在最後利用user.is_authenticated = request.form['password'] == users[使用者]['password']來設定使用者是否成功登入獲得權限了。若使用者在登入表單中輸入的密碼request.form['password']和我們知道的users[使用者]['password']一樣，就回傳True到user.is_authenticated上。
+@login_manager.request_loader
+def request_loader(request):
+    userAccount = request.form.get('userAccount')
+    if userAccount not in users:
+        return
+
+    user = User()
+    user.id = userAccount
+
+    # DO NOT ever store passwords in plaintext and always compare password
+    # hashes using constant-time comparison!
+    user.is_authenticated = request.form['password'] == users[userAccount]['password']
+
+    return user
+
 
 # 使用者有沒有點擊開始偵測 #測試用
 is_click = False
@@ -47,12 +96,12 @@ def gen_frames():
             global test_detect_return
             if is_click == True:
                 is_click = False
-                test_detect_return = test_detect(yolov5_model,frame)[0]
-                test_detect_image = test_detect(yolov5_model,frame)[1]
+                test_detect_return = test_detect(yolov5_model,frame)[0] # 辨識完的結果
+                test_detect_image = test_detect(yolov5_model,frame)[1] # 辨識完的圖片
                 now_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())#測試用，加時間戳
                 print(f"測試偵測結果為 ==> {test_detect_return}, 偵測時間為{now_time}")
-                img_file_path =f'D:\\MCUT-yolov5-to-flask\\static\\img\\detect_result\\{time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime())}.jpg'
-                cv2.imwrite(img_file_path, test_detect_image)
+                img_file_path =f'D:\\MCUT-yolov5-to-flask\\static\\img\\detect_result\\{time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime())}.jpg' # 保存圖片的路徑
+                cv2.imwrite(img_file_path, test_detect_image) #保存圖片(須注意imwrite 不支持中文路徑和文件名)
                 with open('detect_log.txt','a+',encoding='utf-8') as file: # a+ 打開一個文件用於讀寫。如果該文件已存在，文件指針將會放在文件的结尾。文件打開時會是追加模式。如果該文件不存在，創建新文件用於讀寫。
                     log_data=f"測試偵測結果為 ==> {test_detect_return}, 偵測時間為{now_time}, 檔案路徑為{img_file_path}\n" # add backslash n for the newline characters at the end of each line
                     file.write(log_data)
@@ -96,7 +145,7 @@ def get_all_images():
               img.endswith("png")]
     return images
 
-
+# 首頁
 @app.route("/") #透過 decorater 定義路由並以函式為基礎提供附加功能
 @app.route("/index")
 def index():
@@ -110,6 +159,7 @@ def quick_start():
 
 # 讓使用者登入後查看歷史紀錄的頁面
 @app.route("/history")
+@login_required
 def history():
     # 顯示在歷史紀錄頁面table中的資料
     detection_history_data = [] 
@@ -200,7 +250,7 @@ def detect_mask():
     test_detect_return = ""
     # cap.release()
     # cv2.destroyAllWindows() #關閉所有opencv視窗
-    data = {"trans":"132","detect_result": detect_result}
+    data = {"trans":"沒用的資料拿來測試用而已","detect_result": detect_result}
     # data = json.dumps(data)
     print(data)
     
@@ -230,10 +280,31 @@ def drop_table():
     cursor.close()
     return "drop success!!"
 
-@app.route('/login_page')
-def login_page():
-    return render_template('login_page.html')
- 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    
+    userrrr = request.form['userAccount'] # userrrr 是使用者
+    if (userrrr in users) and (request.form['password'] == users[userrrr]['password']):
+        user = User()
+        user.id = userrrr
+        login_user(user)
+        flash(f'{userrrr}！歡迎使用口罩辨識系統！')
+        return redirect(url_for('index'))
+
+    flash('登入失敗了...')
+    return render_template('login.html')
+
+# 登出函數
+@app.route('/logout')
+def logout():
+    userrrr = current_user.get_id() # userrrr 是使用者
+    logout_user()
+    flash(f'{userrrr}！歡迎下次再來！')
+    return render_template('login.html')
+
+# 使用者註冊表單
 @app.route('/user_signup', methods = ['POST', 'GET'])
 def user_signup():
     if request.method == 'GET':
@@ -272,10 +343,10 @@ def slideshow():
     # 在gen()函數中，我們將使用yield關鍵字來返回圖像。
     return Response(gen(),mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
 @app.route('/camera')
+@login_required
 def camera():
-
-
     return render_template('camera.html')
 
 # 返回video streaming response

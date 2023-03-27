@@ -7,18 +7,18 @@
 
      
      <div class="text-center mt-5 mb-5">
-        <form style="max-width:300px;margin:auto;" action="{{ url_for('user_signin') }}" method="POST">
+        <form style="max-width:300px;margin:auto;" action="{{ url_for('login') }}" method="POST">
             <img class="mb-3" 
             src="{{ url_for('static', filename='img/mcut_logo.png') }}" width="100" alt="Capstone Firecloud Logo" >
             <!-- src="https://user-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_100,w_100,f_auto,q_auto/1487003/716368_383992.png" alt="Capstone Firecloud Logo"> -->
             <h1 class="h3 mb-3 font-weight-normal ">使用者登入</h1>
             {#<!-- <label> 用於設定欄位標題，讓表單結構更具體、易於解析，也能提升易用性。 <label>裡的 for 屬性值，要對應到欄位的name或id屬性值 -->#}
             <div class="form-floating text-secondary">
-              <input type="text" name="adminAccount" id="floatingInput" class="form-control form-control-lg mb-3 " placeholder="請輸入帳號" required autofocus>
+              <input type="text" name="userAccount" id="floatingInput" class="form-control form-control-lg mb-3 " placeholder="請輸入帳號" required autofocus>
               <label for="floatingInput">請輸入帳號</label>
             </div>
             <div class="form-floating text-secondary">
-              <input type="password" name="adminPassword" id="floatingPassword" class="form-control form-control-lg" placeholder="請輸入密碼" required minlength="6" maxlength="128">
+              <input type="password" name="password" id="floatingPassword" class="form-control form-control-lg" placeholder="請輸入密碼" required minlength="6" maxlength="128">
               <label for="floatingPassword">請輸入密碼</label>
             </div>
             <div class="mt-3">
