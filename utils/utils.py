@@ -868,8 +868,8 @@ def plot_one_box(x, img, color=None, label=None, line_thickness=None):
         c2 = c1[0] + t_size[0], c1[1] - t_size[1] - 3
         cv2.rectangle(img, c1, c2, color, -1, cv2.LINE_AA)  # filled
         img = cv2AddChineseText(img, label, (c1[0], c1[1] - 14), textColor=(255, 255, 255), textSize=15)
-        # font = cv2.FONT_HERSHEY_SIMPLEX # 原作者放的字
-        # cv2.putText(img,"YOLO v5  by HuBin",(40,40),font, 0.1, (0, 255, 0), 1) # 原作者放的字
+        # font = cv2.FONT_HERSHEY_SIMPLEX # 原作者放的字，用來表示正常大小無襯線字體 ref: https://ithelp.ithome.com.tw/articles/10237817
+        # cv2.putText(img,"YOLO v5  by HuBin",(40,40),font, 0.1, (0, 255, 0), 1) # 原作者放的字, cv2.putText(影像, 輸出文字, 文字座標, 字型, 字元大小, 文字顏色, 線條寬度, 線條種類)
         # cv2.putText(img, label, (c1[0], c1[1] - 2), 0, tl / 3, [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA) 
 
     return img

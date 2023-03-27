@@ -2,18 +2,6 @@
 
 {% block title %}Show img{% endblock %}
 
-{% block styles %}  
-<!-- <style>
-    .alert{
-        position: fixed;
-        width: 50%;
-        margin-left: 20%;
-        z-index: 2000;
-    }
-</style> -->
-{% endblock %}
-
-
 {% block main %}
 
     {# <!-- Import Bootstrap SVG: https://bootstrap5.hexschool.com/docs/5.0/components/alerts/#icons --> #}
@@ -64,38 +52,9 @@
             <strong>沒有戴口罩!</strong>
             </div>
         </div>
-        {#
-        <div class="d-flex justify-content-center container-fluid">
-            <!-- <div class="btn btn-primary m-4">即時影像</div> -->
-            <img src="{{ url_for('video_feed') }}" alt="Camera Live Streaming 即時影像" style="display:block; margin:auto;">
-        </div>
-        #}
-        <!-- 640*480 -->
-        <img src="{{ url_for('video_feed') }}" alt="Camera Live Streaming 即時影像" class="rounded mx-auto d-block">
-        <!-- <br> -->
+
+        <img src="{{ url_for('video_feed') }}" alt="即時影像" class="rounded mx-auto d-block">
         
-<!-- 測試ajax -->
-{#输入框#}
-{#    <input  type="text" id="word" name="word" /> #}
-{#弹窗按钮#}
-{#    <button class="btn btn-info" data-toggle="modal" data-target="#myModal">翻译</button>
-<div class="modal fade" id="myModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button class="close" data-dismiss="modal">X</button>
-                <div class="modal-title"></div>
-            </div>
-            <!-- 弹窗的内容 -->
-            <div class="modal-body"></div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" data-dismiss="modal">关闭</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- 測試ajax結束 -->
-#}
 
         <button type="button" class="btn btn-light btn-lg mt-2 fw-bold" id="start_btn">開始偵測</button>
 {# 
@@ -156,7 +115,7 @@
           type:'POST',
         //   type:'GET', // 測試用亂改的
         //    data: {'mydata':$('input[id="word"]').val()},
-           data: {'mydata':'有按'},
+           data: {'mydata':'點擊按扭了'},
           dataType:"json",
         // data:…和success(data)不是同一個！
         // 前者：從前端獲取並想傳給後台的數據
