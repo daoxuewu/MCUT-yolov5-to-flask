@@ -355,10 +355,6 @@ def user_signup():
         return f"<h1>signup success!! your name is {user_name}</h1>"
 
 
-@app.route('/show')
-def show():
-    return render_template('show.html')
-
 # https://softwareparticles.com/stream-images-to-browser-creating-a-slideshow-in-python/
 @app.route('/slideshow')
 def slideshow():
