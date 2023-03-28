@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Index page{% endblock %}
+{% block title %}Index page{% endblock title %}
 
 {% block main %}
     <!-- <h1>Hello World !!</h1> -->
@@ -8,7 +8,6 @@
     <a href="{{ url_for('login') }}">click here login</a><br/>
     <a href="{{ url_for('show') }}">show img</a><br/>
     <a href="{{ url_for('camera') }}">show camera streaming</a><br/>
-    <a href="{{ url_for('quick_start') }}">Quick Start</a>
 #}
 {#
     <h3>Pictures Streaming</h3>
@@ -37,4 +36,4 @@
     
 
 
-{% endblock %}
+{% endblock main %}

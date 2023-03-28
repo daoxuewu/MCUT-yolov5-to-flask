@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Test Streaming{% endblock %}
+{% block title %}Test Streaming{% endblock title %}
 
 {% block main %}
 
@@ -57,7 +57,7 @@
         <button type="button" class="btn btn-light btn-lg mt-2 fw-bold" id="start_btn">開始偵測</button>
     </div>
 
-{% endblock %}
+{% endblock main %}
 
 {% block script %}
 {# <!-- ref: https://blog.csdn.net/ZHANGYANG_1109/article/details/121482666 --> #}
@@ -111,4 +111,4 @@
    });
 
 </script>
-{% endblock %}
+{% endblock script %}

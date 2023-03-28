@@ -152,10 +152,6 @@ def index():
     # jinja2模板
     return render_template("index.html") #函式回傳的內容
 
-# 讓使用者登入後快速開始的頁面
-@app.route("/quick_start")
-def quick_start():
-    return render_template("quick_start.html")
 
 # 讓使用者登入後查看歷史紀錄的頁面
 @app.route("/history")

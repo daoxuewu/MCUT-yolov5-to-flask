@@ -14,12 +14,12 @@
   <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">   
   {# <!--可供更改的部分，block有點像在程式裡挖洞的概念，讓套用此模板的不同網頁可以填入不同的內容，大家都要用的就不要用block處理--> #}
   <title>{% block title %}{% endblock title %}</title>
-  {% block styles %}{% endblock %}
+  {% block styles %}{% endblock styles %}
 </head>
 <body class="text-white bg-dark bg-gradient" {% block body %}{% endblock %}>
   
     <!-- 希望能固定出現在每個網頁的 nav(尚未添加) -->
-    {% block navbar %}{% endblock %}
+    {% block navbar %}{% endblock navbar %}
 
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
       <div class="container-fluid">
@@ -100,22 +100,22 @@
     
     {#<!-- 為了秀出 flex message 用的 ref: https://flask.palletsprojects.com/en/2.2.x/patterns/flashing/ -->#}
     {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <!-- 這裡還可以在調整成讓使用者可以關閉的版本會更好 -->
-    <div class="text-center mt-auto container-fluid">
-      <div class="alert alert-primary d-flex justify-content-center"  role="alert">
-        <ul class=flashes>
-        {% for category, message in messages %}
-        <strong><li class="{{ category }}" style="list-style: none;">{{ message }}</li></strong>
-        {% endfor %}
-        </ul>
+      {% if messages %}
+      <!-- 這裡還可以在調整成讓使用者可以關閉的版本會更好 -->
+      <div class="text-center mt-auto container-fluid">
+        <div class="alert alert-primary d-flex justify-content-center"  role="alert">
+          <ul class=flashes>
+          {% for category, message in messages %}
+          <strong><li class="{{ category }}" style="list-style: none;">{{ message }}</li></strong>
+          {% endfor %}
+          </ul>
+        </div>
       </div>
-    </div>
-    {% endif %}
+      {% endif %}
     {% endwith %}
 
   {# <!-- Convenience block inside the body. Put stuff here. --> #}
-  {% block content %}{% endblock %}
+  {% block content %}{% endblock content %}
 
   <main>
     {# <!-- 可供更改的部分 --> #}
@@ -125,13 +125,14 @@
 {#
   <!-- 希望能固定出現在每個網頁的 footer(尚未添加) https://ithelp.ithome.com.tw/articles/10267476 -->
   <footer class="fixed-bottom text-center text-white-50">
+    <!-- ref: source https://bootstrap5.hexschool.com/docs/5.0/examples/cover/#  -->
     <p>明志科大畢業專題, by <a class="text-white">吳家豪、江易澤、林承旭</a> <a href="#" class="text-white">吳家豪、江易澤、林承旭</a>.</p>
   </footer>
 #}
 
   {#<!-- Import Bootstrap bundle -->#}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
-  {% block script %}{% endblock %}
+  {% block script %}{% endblock script %}
 
 </body>
 </html>

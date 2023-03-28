@@ -1,11 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Login page{% endblock %}
+{% block title %}Login page{% endblock title %}
 
 {% block main %}
-
-
-     
+   
      <div class="text-center mt-5 mb-5">
         <form style="max-width:300px;margin:auto;" action="{{ url_for('login') }}" method="POST">
             <img class="mb-3" 
@@ -28,4 +26,4 @@
         <p class="mt-3 text-white-50">還沒有帳號?點擊此處<a href="{{ url_for('user_signup') }}" class="link-primary text-decoration-none">註冊</a></p>
       </div>
 
-{% endblock %}
+{% endblock main %}

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Detecting historical records{% endblock %}
+{% block title %}Detecting historical records{% endblock title %}
 
 {% block main %}
-<h1 class="text-center mt-5">Detecting historical records</h1>
+  <h1 class="text-center mt-5">Detecting historical records</h1>
 
-<div class="container table-responsive">
+  <div class="container table-responsive">
     <table class="table table-striped table-dark table-hover">
       <tr class="table__header">
           {% for header in history_page_headings %}
@@ -21,4 +21,4 @@
       {% endfor %}
     </table>
   </div>
-{% endblock %}
+{% endblock main %}
