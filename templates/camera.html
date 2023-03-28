@@ -50,7 +50,7 @@
 
         <img src="{{ url_for('video_feed') }}" alt="即時影像" class="rounded mx-auto d-block">
         
-        {% if current_user.is_authenticated %}
+        {% if current_user.is_authenticated %} {# current_user並非只能應用於後端，前端jinja2也可以直接使用該物件 ref: https://hackmd.io/@shaoeChen/HJiZtEngG/https%3A%2F%2Fhackmd.io%2Fs%2Fryvr_ly8f#%E7%B8%BD%E7%B5%90 #}
         <!-- 登入後才可見到的導覽列 -->
         <button type="button" class="btn btn-light btn-lg mt-2 fw-bold" id="start_btn">開始紀錄</button>
         {% else %}

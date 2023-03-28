@@ -16,7 +16,7 @@ config.read('config.ini', encoding='utf-8')
 
 # Flask 初始化
 app=Flask(__name__,  static_folder='static', template_folder='templates') #__name__ 代表目前執行的模組
-app.secret_key = config.get('flask', 'secret_key') # 設定 flask 的密鑰secret_key。要先替 flask 設定好secret_key，Flask-Login 才能運作。
+app.secret_key = config.get('flask', 'secret_key') # 設定 flask 的密鑰secret_key。要先替 flask 設定好secret_key，Flask-Login 才能運作。 How to generate good secret keys(可以參考官方連結):https://flask.palletsprojects.com/en/2.2.x/quickstart/#sessions
 
 # MYSQL 資料庫初始化
 # app.config['MYSQL_HOST'] = 'localhost'
@@ -30,24 +30,32 @@ app.MYSQL_DB = config.get('mysql', 'MYSQL_DB')
  
 #mysql = MySQL(app)
 
-# users 使用者清單 定義一個使用者清單，'Me'是帳號(或說是使用者名稱)，這個帳號的密碼是'myself'。這當然是一個簡單的設定方式。喜歡的話也可以在 Heroku Postgres 上另外做一個表單(table)，並將使用者資料存放在那邊。
-users = {'Justin': {'password': '12345678'}}
+# users 使用者清單 定義一個使用者清單，'Justin'是帳號(或說是使用者名稱)，這個帳號的密碼是'12345678'。這當然是一個簡單的設定方式。喜歡的話也可以在 Heroku Postgres 上另外做一個表單(table)，並將使用者資料存放在那邊。
+users = {'Justin': {'password': '12345678'}} # 用來測試的一筆假資料
 
 # Flask-Login 初始化
 login_manager = LoginManager() # 產生一個LoginManager()物件來初始化 Flask-Login
-login_manager.init_app(app) # 將 flask 和 Flask-Login 綁定起來
+login_manager.init_app(app) # 將 flask 和 Flask-Login 綁定起來(讓flask認識flask-login)，app 即為 flask object
 login_manager.session_protection = "strong" # 將session_proctection調整到最強。預設是"basic"，也會有一定程度的保護，所以這行可選擇不寫上去。
 login_manager.login_view = 'login' # 當使用者還沒登入，卻請求了一個需要登入權限才能觀看的網頁時，我們就先送使用找到login_view所指定的位置來。以這行程式碼為例，當未登入的使用者請求了一個需要權限的網頁時，就將他送到代表login()的位址去。我們現在還沒寫出login()這個函數，所以等等要補上。
 login_manager.login_message = '請先登入才能使用此功能' # login_message是和login_view相關的設定，當未登入的使用者被送到login_view所指定的位址時，會一併跳出的訊息。
 
 # 宣告我們要借用 Flask-Login 提供的類別UserMixin，並放在User這個物件上。但其實這裡沒有對UserMixin做出任何更動，因此下面那行程式碼用個pass就行。
 class User(UserMixin):
+    """
+    只是單純的繼承官方所提供的 UserMixin 而以 如果我們希望可以做更多判斷，
+    如is_administrator也可以從這邊來加入 
+    """
     pass
 
-# 做一個驗證使用者是否登入的user_loader()。下面的程式碼基本上就是確認使用者是否是在我們的合法清單users當中，若沒有，就什麼都不做。若有，就宣告一個我們剛才用UserMixin做出來的物件User()，貼上user標籤，並回傳給呼叫這個函數user_loader()的地方。
+# 下面的程式碼基本上就是上面初始化完的login_manager做為裝飾器來包裝驗證使用者是否登入的user_loader()。確認使用者是否是在我們的合法清單users當中，若沒有，就什麼都不做回傳None。若有，就宣告一個我們剛才用UserMixin做出來的物件User()，貼上user(使用者)標籤，並回傳給呼叫這個函數user_loader()的地方。
 @login_manager.user_loader
 def user_loader(userAccount):
-    if userAccount not in users:
+    """  
+    透過這邊的設置讓flask_login可以隨時取到目前的使用者id   
+    :param email:官網此例將email當id使用，賦值給予user.id    
+    """   
+    if userAccount not in users: # 我把 email 改成 userAccount
         return
 
     user = User()
@@ -57,7 +65,7 @@ def user_loader(userAccount):
 # 做一個從flask.request驗證使用者是否登入的request_loader()。下面的程式碼基本上就是確認使用者是否是在我們的合法清單users當中，若沒有，就什麼都不做。若有，就宣告一個我們剛才用UserMixin做出來的物件User()，貼上user標籤，並回傳給呼叫這個函數request_loader()的地方。並在最後利用user.is_authenticated = request.form['password'] == users[使用者]['password']來設定使用者是否成功登入獲得權限了。若使用者在登入表單中輸入的密碼request.form['password']和我們知道的users[使用者]['password']一樣，就回傳True到user.is_authenticated上。
 @login_manager.request_loader
 def request_loader(request):
-    userAccount = request.form.get('userAccount')
+    userAccount = request.form.get('userAccount') #userAccount 可以改成 email
     if userAccount not in users:
         return
 
@@ -164,7 +172,7 @@ def index():
 
 # 讓使用者登入後查看歷史紀錄的頁面
 @app.route("/history")
-@login_required
+@login_required # 這個裝飾器包裝起來的view就意謂著必需是登入狀態才能進入，否則你就是會被引導回login這個view。
 def history():
     # 顯示在歷史紀錄頁面table中的資料
     detection_history_data = [] 
@@ -202,7 +210,7 @@ def about_us():
 
 #YoloV5只傳圖片測試用頁面
 @app.route('/test_page')
-@login_required
+@login_required # 這個裝飾器包裝起來的view就意謂著必需是登入狀態才能進入，否則你就是會被引導回login這個view。
 def test_page():
    return render_template('test_page.html')
 
@@ -297,12 +305,18 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
     
-    userrrr = request.form['userAccount'] # userrrr 是使用者
-    if (userrrr in users) and (request.form['password'] == users[userrrr]['password']):
+    #從前端取得使用者的輸入
+    userAccount = request.form['userAccount'] # userAccount 是使用者
+    # 使用者(user)登入驗證帳號密碼，實務上會從資料庫中取回該帳號使用者並驗證密碼是否正確
+    if (userAccount in users) and (request.form['password'] == users[userAccount]['password']):
+        # 實作User類別
         user = User()
-        user.id = userrrr
+        # 設置id就是使用者帳號(email)
+        user.id = userAccount 
+        # 透過login_user來記錄user_id, 在經過login_user(user)之後，後面的應用就都可以利用current_user來取得用戶資訊 ref: https://hackmd.io/@shaoeChen/ryvr_ly8f?type=view#login_user
         login_user(user)
-        flash(f'{userrrr}！歡迎使用口罩辨識系統！')
+        flash(f'{userAccount}！歡迎使用口罩辨識系統！')
+        # 登入成功，轉址
         return redirect(url_for('index'))
 
     flash('登入失敗了...')
@@ -311,12 +325,12 @@ def login():
 # 登出函數
 @app.route('/logout')
 def logout():
-    userrrr = current_user.get_id() # userrrr 是使用者
+    userAccount = current_user.get_id() # 在經過login_user(user)之後，後面的應用就都可以利用current_user來取得用戶資訊
     logout_user()
-    if userrrr == None:
+    if userAccount == None:
         flash(f'您已登出！')
     else:
-        flash(f'{userrrr}！歡迎下次再來！')
+        flash(f'{userAccount}！歡迎下次再來！')
     return redirect(url_for('index'))
     # return render_template('index.html')
 
@@ -340,14 +354,6 @@ def user_signup():
 
         return f"<h1>signup success!! your name is {user_name}</h1>"
 
-# 管理員登入表單
-@app.route("/user_signin",methods=["POST"])
-def user_signin():
-    #從前端取得使用者的輸入
-    admin_account=request.form["adminAccount"]
-    # admin_password=request.form["adminPassword"]
-    
-    return  f"login success!! your account is {admin_account}"
 
 @app.route('/show')
 def show():
