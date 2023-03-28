@@ -24,10 +24,8 @@
         <h1 class="title d-flex">Camera Live Streaming</h1>
 
         <div class="alert alert-primary d-flex justify-content-center d-none" role="alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
-            <div>
-              偵測中請稍等...
-            </div>
+            <span class="spinner-border flex-shrink-1 me-2"  style="width: 1.5rem; height: 1.5rem;" role="status" aria-hidden="true"></span>
+              <strong>偵測中請稍等...</strong>
         </div>
         <div class="alert alert-success d-flex justify-content-center d-none" role="alert">
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
@@ -41,11 +39,6 @@
             <strong>口罩沒戴好!</strong>
             </div>
         </div>
-        {#<!-- 有讓使用者關閉按鈕的通知 -->#}
-        <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div> -->
         <div class="alert alert-danger d-flex justify-content-center d-none" role="alert">
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
             <div>
@@ -57,11 +50,7 @@
         
 
         <button type="button" class="btn btn-light btn-lg mt-2 fw-bold" id="start_btn">開始偵測</button>
-{# 
-        <button type="button" class="btn btn-success btn-lg" id="with_mask">有戴</button>
-        <button type="button" class="btn btn-warning btn-lg" id="mask_weared_incorrect">沒戴好</button>
-        <button type="button" class="btn btn-danger btn-lg" id="without_mask">沒戴</button>
-#}    
+
     </div>
 <!-- </br> -->
 {% endblock %}
@@ -72,40 +61,6 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
 
 <script>
-    // $("#start_btn").click(function(){
-    //     $(".alert-primary").removeClass("d-none");
-    //     // $(".alert-primary").addClass("d-block");
-    //     window.setTimeout(function(){
-    //         // $(".alert-primary").removeClass("d-block");
-    //         $(".alert-primary").addClass("d-none");
-    //     },5000);//顯示的時間
-    // })
-    /*
-    $("#with_mask").click(function(){
-        $(".alert-success").removeClass("d-none");
-        $(".alert-success").addClass("d-block");
-        window.setTimeout(function(){
-            $(".alert-success").removeClass("d-block");
-            $(".alert-success").addClass("d-none");
-        },5000);//顯示的時間
-    })
-    $("#mask_weared_incorrect").click(function(){
-        $(".alert-warning").removeClass("d-none");
-        $(".alert-warning").addClass("d-block");
-        window.setTimeout(function(){
-            $(".alert-warning").removeClass("d-block");
-            $(".alert-warning").addClass("d-none");
-        },5000);//顯示的時間
-    })
-    $("#without_mask").click(function(){
-        $(".alert-danger").removeClass("d-none");
-        $(".alert-danger").addClass("d-block");
-        window.setTimeout(function(){
-            $(".alert-danger").removeClass("d-block");
-            $(".alert-danger").addClass("d-none");
-        },5000);//顯示的時間
-    })
-*/
 
 // 測試ajax
     $("#start_btn").click(function(){
@@ -113,20 +68,16 @@
       $.ajax({
           url:"{{ url_for('detect_mask') }}",
           type:'POST',
-        //   type:'GET', // 測試用亂改的
-        //    data: {'mydata':$('input[id="word"]').val()},
            data: {'mydata':'點擊按扭了'},
           dataType:"json",
-        // data:…和success(data)不是同一個！
+        // data:…和success(data)不是同一個！ ref: https://blog.csdn.net/EchoooZhang/article/details/104491914
         // 前者：從前端獲取並想傳給後台的數據
         // 後者：傳後台成功後，後台返回给你的處理好的數據  
         success:function (data) {
-            //   彈出視窗
-            //  $('#myModal').modal();
 
              //在html頁面的標籤裡顯示自己後台返回的data內容
 
-             if (data.word == "success"){// 辨識成功
+             if (data.detect_result == "with_mask"){// 有口罩
                 $(".alert-primary").addClass("d-none");
                 $(".alert-success").removeClass("d-none");
                 $(".alert-success").addClass("d-block");
@@ -134,7 +85,15 @@
                     $(".alert-success").removeClass("d-block");
                     $(".alert-success").addClass("d-none");
                 },5000);//顯示的時間
-            }else if (data.word == "danger"){// 辨識失敗
+            }else if (data.detect_result == "mask_weared_incorrect"){// 口罩沒戴好
+                $(".alert-primary").addClass("d-none");
+                $(".alert-warning").removeClass("d-none");
+                $(".alert-warning").addClass("d-block");
+                window.setTimeout(function(){
+                    $(".alert-warning").removeClass("d-block");
+                    $(".alert-warning").addClass("d-none");
+                },5000);//顯示的時間
+            }else if (data.detect_result == "without_mask"){// 無口罩
                 $(".alert-primary").addClass("d-none");
                 $(".alert-danger").removeClass("d-none");
                 $(".alert-danger").addClass("d-block");
@@ -143,10 +102,7 @@
                     $(".alert-danger").addClass("d-none");
                 },5000);//顯示的時間
             }
-            //   var html ="<span>"+data.trans+"</span>";
-            //   var html2 ="<span>"+data.word+"</span>";
-            //  $("#測試成功").html(html);
-            //  $(".modal-title").html(html2)
+
         }});
    });
 

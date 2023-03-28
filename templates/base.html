@@ -20,6 +20,7 @@
   
     <!-- 希望能固定出現在每個網頁的 nav(尚未添加) -->
     {% block navbar %}{% endblock %}
+
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
       <div class="container-fluid">
 
@@ -45,31 +46,53 @@
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('about_us') }}"><!-- 關於我們 -->About</a>
             </li>
-            {#
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('test_page') }}"><!-- 測試用頁面 -->開發人員測試用</a>
-            </li>
-            #}
           </ul>
         </div>
         <!-- 左邊結束 -->
         <!-- navbar的右邊 -->
         <div class="collapse navbar-collapse justify-content-end navbarSupportedContent">
           <ul class="navbar-nav">
-              <!-- <li class="nav-item ">
-                  <a class="nav-link" href="#">测试</a>
-              </li> -->
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Setting
                 </a>
                 <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarDarkDropdownMenuLink">
-                  <li><a class="dropdown-item" href="{{ url_for('test_page') }}"><!-- 測試用頁面 -->開發人員測試頁面</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('test_stream') }}">測試串流</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('logout') }}">登出帳號</a></li>
+                  <li><a class="dropdown-item disabled" href="{{ url_for('test_page') }}" tabindex="-1" aria-disabled="true"><!-- 測試用頁面 -->開發人員測試頁面</a></li>
+                  <li><a class="dropdown-item disabled" href="{{ url_for('test_stream') }}" tabindex="-1" aria-disabled="true">測試串流</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <!-- 按鈕 Button trigger modal -->
+                  <li>              
+                    {% if current_user.is_authenticated %}
+                    <a class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#LogoutModal">登出</a>
+                    <!-- 登入後才可見到的導覽列 -->
+                    {% else %}
+                    <!-- 否則就看到 -->
+                    <a class="dropdown-item" href="{{ url_for('login') }}">登入</a>
+                    {% endif %}
+                    
+                  </li>                
                 </ul>
               </li>
           </ul>
+        </div>
+
+        <!-- 登出按鈕彈出視窗內容 Modal -->
+        <div class="modal fade text-dark" id="LogoutModal" tabindex="-1" aria-labelledby="LogoutModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title h3" id="LogoutModalLabel">登出帳號</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                確定要登出帳號嗎?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <a type="button" class="btn btn-primary" href="{{ url_for('logout') }}" role="button">登出</a>
+              </div>
+            </div>
+          </div>
         </div>
         <!-- 右邊結束 -->
       </div>

@@ -69,7 +69,7 @@ def request_loader(request):
 
 # 使用者有沒有點擊開始偵測 #測試用
 is_click = False
-# 口罩偵測(test_detect)出來的值
+# 口罩偵測(test_detect)出來的值(狀態state)
 test_detect_return = ""
 
 # 網頁串流
@@ -172,6 +172,12 @@ def history():
                  ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
                  ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
                  ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
+                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
+                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
+                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
+                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
+                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
+                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
                  ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"]
     ]
 
@@ -191,6 +197,7 @@ def about_us():
 
 #YoloV5只傳圖片測試用頁面
 @app.route('/test_page')
+@login_required
 def test_page():
    return render_template('test_page.html')
 
@@ -301,7 +308,10 @@ def login():
 def logout():
     userrrr = current_user.get_id() # userrrr 是使用者
     logout_user()
-    flash(f'{userrrr}！歡迎下次再來！')
+    if userrrr == None:
+        flash(f'您已登出！')
+    else:
+        flash(f'{userrrr}！歡迎下次再來！')
     return render_template('login.html')
 
 # 使用者註冊表單
