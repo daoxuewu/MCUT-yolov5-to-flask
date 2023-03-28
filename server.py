@@ -12,17 +12,21 @@ yolov5_model = get_model() #測試
 
 # config 初始化
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read('config.ini', encoding='utf-8')
 
 # Flask 初始化
 app=Flask(__name__,  static_folder='static', template_folder='templates') #__name__ 代表目前執行的模組
 app.secret_key = config.get('flask', 'secret_key') # 設定 flask 的密鑰secret_key。要先替 flask 設定好secret_key，Flask-Login 才能運作。
 
 # MYSQL 資料庫初始化
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'zxcvbnm987'
-app.config['MYSQL_DB'] = 'flask'
+# app.config['MYSQL_HOST'] = 'localhost'
+# app.config['MYSQL_USER'] = 'root'
+# app.config['MYSQL_PASSWORD'] = 'zxcvbnm987'
+# app.config['MYSQL_DB'] = 'flask'
+app.MYSQL_HOST = config.get('mysql', 'MYSQL_HOST')
+app.MYSQL_USER = config.get('mysql', 'MYSQL_USER')
+app.MYSQL_PASSWORD = config.get('mysql', 'MYSQL_PASSWORD')
+app.MYSQL_DB = config.get('mysql', 'MYSQL_DB')
  
 #mysql = MySQL(app)
 
@@ -100,14 +104,19 @@ def gen_frames():
                 test_detect_image = test_detect(yolov5_model,frame)[1] # 辨識完的圖片
                 now_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())#測試用，加時間戳
                 print(f"測試偵測結果為 ==> {test_detect_return}, 偵測時間為{now_time}")
-                img_file_path =f'D:\\MCUT-yolov5-to-flask\\static\\img\\detect_result\\{time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime())}.jpg' # 保存圖片的路徑
-                cv2.imwrite(img_file_path, test_detect_image) #保存圖片(須注意imwrite 不支持中文路徑和文件名)
+
+                # python 抓相對路徑 ref: https://towardsthecloud.com/get-relative-path-python
+                absolute_path = os.path.dirname(__file__)
+                relative_path = f'static\img\detect_result\{time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime())}.jpg'
+                img_path = os.path.join(absolute_path, relative_path) # 保存圖片的路徑
+
+                cv2.imwrite(img_path, test_detect_image) #保存圖片(須注意imwrite 不支持中文路徑和文件名)
                 with open('detect_log.txt','a+',encoding='utf-8') as file: # a+ 打開一個文件用於讀寫。如果該文件已存在，文件指針將會放在文件的结尾。文件打開時會是追加模式。如果該文件不存在，創建新文件用於讀寫。
-                    log_data=f"測試偵測結果為 ==> {test_detect_return}, 偵測時間為{now_time}, 檔案路徑為{img_file_path}\n" # add backslash n for the newline characters at the end of each line
+                    log_data=f"測試偵測結果為 ==> {test_detect_return}, 偵測時間為{now_time}, 檔案路徑為{img_path}\n" # add backslash n for the newline characters at the end of each line
                     file.write(log_data)
 
             # date_time = str(datetime.now())  #測試用，加時間戳 ref: https://ask.csdn.net/questions/7578158?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522167990655916800188519832%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fall.%2522%257D&request_id=167990655916800188519832&biz_id=4&utm_medium=distribute.pc_search_result.none-task-ask_topic-2~all~first_rank_ecpm_v1~rank_v31_ecpm-2-7578158-null-null.142%5Ev76%5Epc_search_v2,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=global%20cap_msmf.cpp%3A1759%20CvCapture_MSMF%3A%3AgrabFrame%20videoio%28MSMF%29%3A%20cant%20grab%20frame&spm=1018.2226.3001.4187   
-            frame = detect(yolov5_model,frame) #測試用
+            frame = detect(yolov5_model,frame) # 辨識圖片有無口罩，整個專案的核心功能 ref: https://github.com/Transformer-man/yolov5-flask
             # # 因為opencv讀取的圖片並非jpeg格式，因此要用motion JPEG模式需要先將圖片轉碼成jpg格式圖片
             retval, buffer = cv2.imencode('.jpg', frame)
             frame = buffer.tobytes()
@@ -207,7 +216,7 @@ def test_stream():
 def test_video_feed():
     return Response(gen_frames(),mimetype='multipart/x-mixed-replace; boundary=frame')
 
-# 測試用頁面接收圖片的路由
+# 測試用頁面接收圖片的路由 ref: https://github.com/Transformer-man/yolov5-flask
 class_names = [c.strip() for c in open(r'cam/coco.names').readlines()]
 file_name = ['jpg','jpeg','png']
 @app.route('/get_image', methods= ['POST'])
@@ -308,7 +317,8 @@ def logout():
         flash(f'您已登出！')
     else:
         flash(f'{userrrr}！歡迎下次再來！')
-    return render_template('login.html')
+    return redirect(url_for('index'))
+    # return render_template('index.html')
 
 # 使用者註冊表單
 @app.route('/user_signup', methods = ['POST', 'GET'])
@@ -351,7 +361,6 @@ def slideshow():
 
 
 @app.route('/camera')
-@login_required
 def camera():
     return render_template('camera.html')
 

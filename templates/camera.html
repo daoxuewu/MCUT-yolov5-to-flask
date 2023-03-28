@@ -24,8 +24,10 @@
         <h1 class="title d-flex">Camera Live Streaming</h1>
 
         <div class="alert alert-primary d-flex justify-content-center d-none" role="alert">
-            <span class="spinner-border flex-shrink-1 me-2"  style="width: 1.5rem; height: 1.5rem;" role="status" aria-hidden="true"></span>
-              <strong>偵測中請稍等...</strong>
+            <div class="spinner-border flex-shrink-1 me-2"  style="width: 1.5rem; height: 1.5rem;" role="status" aria-hidden="true">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <strong>辨識中請稍等...</strong>
         </div>
         <div class="alert alert-success d-flex justify-content-center d-none" role="alert">
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
@@ -48,8 +50,17 @@
 
         <img src="{{ url_for('video_feed') }}" alt="即時影像" class="rounded mx-auto d-block">
         
-
-        <button type="button" class="btn btn-light btn-lg mt-2 fw-bold" id="start_btn">開始偵測</button>
+        {% if current_user.is_authenticated %}
+        <!-- 登入後才可見到的導覽列 -->
+        <button type="button" class="btn btn-light btn-lg mt-2 fw-bold" id="start_btn">開始紀錄</button>
+        {% else %}
+        <!-- 否則就看到 -->
+        <span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" title="登入後才能使用此功能">
+            <!-- <a type="button" class="btn btn-danger btn-lg mt-2 fw-bold disabled" tabindex="-1" aria-disabled="true" id="start_btn">開始偵測</a> -->
+            <button type="button" class="btn btn-secondary btn-lg mt-2 fw-bold" id="start_btn" disabled>開始紀錄</button>
+        </span>
+        {% endif %}
+        
 
     </div>
 <!-- </br> -->
