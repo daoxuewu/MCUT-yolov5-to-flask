@@ -24,10 +24,17 @@
           <div class="col-lg-6 mx-auto ">
             <p class="fs-5 mb-4">這個專題是使用 python 編寫的輕量級網頁框架 flask 結合 yolov5 lite 訓練出的 model 進行實時的影像辨識使用者有無穿戴口罩，有戴口罩外框會顯示綠色，沒戴好口罩會顯示黃色，沒戴口罩會顯示紅色，歡迎來體驗。</p>
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                {% if current_user.is_authenticated %} {# current_user並非只能應用於後端，前端jinja2也可以直接使用該物件 ref: https://hackmd.io/@shaoeChen/HJiZtEngG/https%3A%2F%2Fhackmd.io%2Fs%2Fryvr_ly8f#%E7%B8%BD%E7%B5%90 #}
+                <!-- 登入後才可見到的頁面 -->
+                <a class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold" href="{{ url_for('camera') }}" role="button">快速開始</a>
+                {% else %}
+                <!-- 否則就看到 -->
                 <a class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold" href="{{ url_for('camera') }}" role="button">快速開始</a>
                 {#<!-- <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">快速開始</button> -->#}
                 <a class="btn btn-outline-light btn-lg px-4" href="{{ url_for('login') }}" role="button">登入帳號</a>
                 {#<!-- <button type="button" class="btn btn-outline-light btn-lg px-4">登入帳號</button> -->#}
+                {% endif %}
+                
             </div>
           </div>
         </div>

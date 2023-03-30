@@ -5,7 +5,7 @@
 {% block main %}
 
 <div class="text-center mt-5">
-    <form style="max-width:300px;margin:auto;" action="{{ url_for('user_signup') }}" method="POST">
+    <form style="max-width:300px;margin:auto;" action="{{ url_for('signup') }}" method="POST">
         <p class="font-weight-bold">請填寫您的相關資訊，以完成帳號註冊</p>
         <input type="text" name="school_id" id="school_id" class="form-control form-control-lg mb-3" placeholder="您的學號" required>
         <input type="text" name="user_name" id="user_name" class="form-control form-control-lg mb-3" placeholder="您的姓名" required>
@@ -19,7 +19,7 @@
     </form>
 </div>
 <!-- 
-<form action="{{ url_for('user_signup') }}" method = "POST">
+<form action="{{ url_for('signup') }}" method = "POST">
     <p>school_id <input type = "text" name = "school_id" /></p>
     <p>user_name <input type = "text" name = "user_name" /></p>
     <p>email <input type = "text" name = "email" /></p>

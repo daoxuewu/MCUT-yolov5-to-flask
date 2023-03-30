@@ -63,8 +63,8 @@
                   <!-- 按鈕 Button trigger modal -->
                   <li>              
                     {% if current_user.is_authenticated %} {# current_user並非只能應用於後端，前端jinja2也可以直接使用該物件 ref: https://hackmd.io/@shaoeChen/HJiZtEngG/https%3A%2F%2Fhackmd.io%2Fs%2Fryvr_ly8f#%E7%B8%BD%E7%B5%90 #}
-                    <a class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#LogoutModal">登出</a>
                     <!-- 登入後才可見到的導覽列 -->
+                    <a class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#LogoutModal">登出</a>
                     {% else %}
                     <!-- 否則就看到 -->
                     <a class="dropdown-item" href="{{ url_for('login') }}">登入</a>

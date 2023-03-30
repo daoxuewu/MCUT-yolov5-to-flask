@@ -1,4 +1,4 @@
-# 要從 git 移除的文件
+# 要從 git 移除的文件夾
 __pycache__/
 datasets/
 models/__pycache__
@@ -8,6 +8,8 @@ runs
 utils/__pycache__
 utils/wandb_logging/__pycache__
 wandb
+.vscode/
+venv/
 
 # 要從 git 移除的檔案
 *.pyc
