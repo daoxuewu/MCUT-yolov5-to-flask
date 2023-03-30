@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}show img{% endblock title %}
+
+{% block main %}
+
+    <h1 class="text-center mt-5">偵測結果截圖</h1>
+
+    <div class="text-center mt-auto container-fluid">
+        <div>
+            <a class="btn-link" href="{{ url_for('history') }}">回到歷史紀錄</a>
+        </div>
+        <img style="width:500;display:block; margin:auto;" src="data:;base64,{{ img_stream }}" alt="辨識結果截圖">
+    </div>
+{% endblock main %}

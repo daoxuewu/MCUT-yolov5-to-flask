@@ -12,10 +12,20 @@
           <th class="table__cell">{{ header }}</th>
           {% endfor %}
       </tr>
-      {% for row in test_data %}
+      {% for row in detection_history_data %}
       <tr class="table__row">
           {% for cell in row %}
-          <td class="table_cell">{{ cell }}</td>
+            {% if '\img\detect_result' in cell  %}
+              <td class="table_cell">
+                <a href="show_img/{{ cell }}">
+                  <div style="height:100%;width:100%">
+                    link
+                  </div>
+                </a>
+              </td>
+            {% else %}
+              <td class="table_cell">{{ cell }}</td>
+            {% endif %}
           {% endfor %}
       </tr>
       {% endfor %}

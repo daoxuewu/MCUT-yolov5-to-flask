@@ -50,9 +50,25 @@ class User(UserMixin):
 def user_loader(userAccount):
     """  
     透過這邊的設置讓flask_login可以隨時取到目前的使用者id   
-    :param email:官網此例將email當id使用，賦值給予user.id    
-    """   
-    if userAccount not in users: # 我把 email 改成 userAccount
+    :param email:官網此例將email當id使用，賦值給予user.id
+    ( 我把email 改成userAccount)    
+    """
+    #根據接收到的資料和資料互動，初始化一個可以執行指令的cursor() (資料指標)
+    cursor = mysql.connection.cursor()
+    # 檢查會員集合中是否有相同email的文件資料
+    # print(f"""SELECT *FROM userdata WHERE email = '%s' """ %(email,))
+    cursor.execute(f"""SELECT * FROM user_data WHERE email = '{userAccount}'""") #cursor.execute 執行資料庫的操作或是查詢動作。一次僅操作一筆資料。
+    email_result = cursor.fetchall() # 所有使用者的email
+    # if (email_result == ()) or (email_result == None):
+    #     flash('請確認帳號是否輸入錯誤')
+    #     return
+    print(f"user_loader email_result == > {email_result}")
+
+    mysql.connection.commit()
+    # 關閉 cursor
+    cursor.close()
+
+    if userAccount not in email_result[0]: # 我把 email 改成 userAccount
         return
 
     user = User()
@@ -63,15 +79,48 @@ def user_loader(userAccount):
 @login_manager.request_loader
 def request_loader(request):
     userAccount = request.form.get('userAccount') #userAccount 可以改成 email
-    if userAccount not in users:
+    
+    #根據接收到的資料和資料互動，初始化一個可以執行指令的cursor() (資料指標)
+    cursor = mysql.connection.cursor()
+    # 檢查會員集合中是否有相同email的文件資料
+    # print(f"""SELECT *FROM userdata WHERE email = '%s' """ %(email,))
+    cursor.execute(f"""SELECT * FROM user_data WHERE email = '{userAccount}'""") #cursor.execute 執行資料庫的操作或是查詢動作。一次僅操作一筆資料。
+
+    email_result = cursor.fetchall() # 所有使用者的email
+    # if (email_result == ()) or (email_result == None):
+    #     flash('請確認帳號是否輸入錯誤')
+    #     return
+    print(f"request_loader email_result == > {email_result}")
+
+    cursor.execute(f"""SELECT password FROM user_data WHERE email = '{userAccount}'""") #cursor.execute 執行資料庫的操作或是查詢動作。一次僅操作一筆資料。
+    password_result = cursor.fetchone() # 該使用者的密碼
+    print(f"request_loader password_result == > {password_result}")
+
+    if (password_result == ()) or (password_result == None):
+        return
+
+    mysql.connection.commit()
+    # 關閉 cursor
+    cursor.close()
+
+    if userAccount not in email_result[0]:
         return
 
     user = User()
     user.id = userAccount
 
+    print(request.form['password'])
+    # print(users[userAccount]['password'])
+    print(password_result)
+    print(request.form['password'] == password_result)
+
+    if (request.form['password'] != password_result[0]):
+        return
+
+
     # DO NOT ever store passwords in plaintext and always compare password
     # hashes using constant-time comparison!
-    user.is_authenticated = request.form['password'] == users[userAccount]['password']
+    user.is_authenticated = request.form['password'] == password_result
 
     return user
 
@@ -79,7 +128,11 @@ def request_loader(request):
 # 使用者有沒有點擊開始偵測 #測試用
 is_click = False
 # 口罩偵測(test_detect)出來的值(狀態state)
-test_detect_return = ""
+global_detect_return = ""
+# 存檔的圖片路徑
+global_img_path = ""
+# 偵測圖片當下的時間
+global_now_time = ""
 
 # 網頁串流
 def gen_frames():
@@ -102,23 +155,29 @@ def gen_frames():
             break
         else:
             global is_click
-            global test_detect_return
+            global global_detect_return
+            global global_img_path
+            global global_now_time
             if is_click == True:
                 is_click = False
-                test_detect_return = test_detect(yolov5_model,frame)[0] # 辨識完的結果
+                global_detect_return = test_detect(yolov5_model,frame)[0] # 辨識完的結果
                 test_detect_image = test_detect(yolov5_model,frame)[1] # 辨識完的圖片
                 now_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())#測試用，加時間戳
-                print(f"測試偵測結果為 ==> {test_detect_return}, 偵測時間為{now_time}")
+                print(f"測試偵測結果為 ==> {global_detect_return}, 偵測時間為{now_time}")
+                global_now_time = now_time
 
                 # python 抓相對路徑 ref: https://towardsthecloud.com/get-relative-path-python
                 absolute_path = os.path.dirname(__file__)
                 relative_path = f'static\img\detect_result\{time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime())}.jpg'
-                img_path = os.path.join(absolute_path, relative_path) # 保存圖片的路徑
+                img_path = os.path.join(absolute_path, relative_path) # 絕對路徑
+                global_img_path = relative_path # 保存圖片的路徑(存相對路徑)
 
                 cv2.imwrite(img_path, test_detect_image) #保存圖片(須注意imwrite 不支持中文路徑和文件名)
-                with open('detect_log.txt','a+',encoding='utf-8') as file: # a+ 打開一個文件用於讀寫。如果該文件已存在，文件指針將會放在文件的结尾。文件打開時會是追加模式。如果該文件不存在，創建新文件用於讀寫。
-                    log_data=f"測試偵測結果為 ==> {test_detect_return}, 偵測時間為{now_time}, 檔案路徑為{img_path}\n" # add backslash n for the newline characters at the end of each line
-                    file.write(log_data)
+                # with open('detect_log.txt','a+',encoding='utf-8') as file: # a+ 打開一個文件用於讀寫。如果該文件已存在，文件指針將會放在文件的结尾。文件打開時會是追加模式。如果該文件不存在，創建新文件用於讀寫。
+                #     log_data=f"測試偵測結果為 ==> {global_detect_return}, 偵測時間為{now_time}, 檔案絕對路徑為{img_path}\n" # add backslash n for the newline characters at the end of each line
+                #     file.write(log_data)
+
+
 
             # date_time = str(datetime.now())  #測試用，加時間戳 ref: https://ask.csdn.net/questions/7578158?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522167990655916800188519832%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fall.%2522%257D&request_id=167990655916800188519832&biz_id=4&utm_medium=distribute.pc_search_result.none-task-ask_topic-2~all~first_rank_ecpm_v1~rank_v31_ecpm-2-7578158-null-null.142%5Ev76%5Epc_search_v2,201%5Ev4%5Eadd_ask,239%5Ev2%5Einsert_chatgpt&utm_term=global%20cap_msmf.cpp%3A1759%20CvCapture_MSMF%3A%3AgrabFrame%20videoio%28MSMF%29%3A%20cant%20grab%20frame&spm=1018.2226.3001.4187   
             frame = detect(yolov5_model,frame) # 辨識圖片有無口罩，整個專案的核心功能 ref: https://github.com/Transformer-man/yolov5-flask
@@ -171,34 +230,61 @@ def index():
 @app.route("/history")
 @login_required # 這個裝飾器包裝起來的view就意謂著必需是登入狀態才能進入，否則你就是會被引導回login這個view。
 def history():
+    
+    # 取得使用者的帳號(email)
+    userAccount = current_user.get_id()
+
+    # 根據接收到的資料和資料互動，初始化一個可以執行指令的cursor() (資料指標)
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'SELECT * FROM history WHERE email = "{userAccount}"')
+    history_data = cursor.fetchall()
+    # print(f'history_data ==> {history_data}')
+    print("")
+    mysql.connection.commit()
+    cursor.close()
+
     # 顯示在歷史紀錄頁面table中的資料
     detection_history_data = [] 
+    # 下面的 for loop 是為了移除掉 primary key(id) 的資料
+    for data in history_data:
+        detection_history_data.append((data[1],data[2],data[3],str(data[4]),data[5]))
 
-    #測試資料(之後會改從資料庫裡撈)
-    test_data = [["學生", "吳家豪", "with_mask", "2023-03-23 09:18:03"], 
-                 ["訪客", "彭于晏", "mask_weared_incorrect", "2023-03-24 14:18:03"], 
-                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"], 
-                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
-                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
-                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
-                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
-                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
-                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
-                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
-                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
-                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
-                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
-                 ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"]
-    ]
+    # #測試資料(之後會改從資料庫裡撈)
+    # test_data = [["學生", "吳家豪", "with_mask", "2023-03-23 09:18:03"], 
+    #              ["訪客", "彭于晏", "mask_weared_incorrect", "2023-03-24 14:18:03"], 
+    #              ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"], 
+    #              ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
+    #              ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"],
+    #              ["老師", "周杰倫", "without_mask", "2023-03-24 17:15:44"]
+    # ]
+    
 
     # 歷史紀錄 table 的標題
-    history_page_headings = ["身份", "姓名", "狀態", "偵測時間"]
+    history_page_headings = ["姓名", "帳號", "狀態", "偵測時間","截圖"]
 
-    # return render_template('alert_history.html',history_page_headings=history_page_headings,python_alert_history_data=alert_history_data)
-    return render_template("history.html",history_page_headings=history_page_headings, test_data=test_data)
+    return render_template("history.html",history_page_headings=history_page_headings, detection_history_data=detection_history_data)
 
+def return_img_stream(img_local_path):
+    """
+    工具函数:
+    获取本地图片流
+    :param img_local_path:文件单张图片的本地绝对路径
+    :return: 图片流
+    reference : https://blog.csdn.net/xyy731121463/article/details/107123635
+    """
+    import base64
+    img_stream = ''
+    with open(img_local_path, 'rb') as img_f:
+        img_stream = img_f.read()
+        img_stream = base64.b64encode(img_stream).decode()
+    return img_stream
 
-
+@app.route("/show_img/static/img/detect_result/<img_path>/") 
+def show_img(img_path):
+    print(f'img == >{img_path}')
+    stream_path = 'static/img/detect_result/' + img_path
+    img_stream = return_img_stream(stream_path)
+    return render_template('show_img.html', img_stream=img_stream)
 
 # 關於我們(寫專案的介紹或是開發者的介紹)
 @app.route("/about_us")
@@ -262,60 +348,128 @@ def detect_mask():
     #     print(f'偵測結果為 == > {detect_result}')
 
     time.sleep(3)
-    global test_detect_return
-    detect_result = test_detect_return
-    test_detect_return = ""
+    global global_detect_return
+    global global_img_path
+    global global_now_time
+    detect_result = global_detect_return
+    img_path = global_img_path
+    now_time = global_now_time
+    global_detect_return = ""
     # cap.release()
     # cv2.destroyAllWindows() #關閉所有opencv視窗
     data = {"trans":"沒用的資料拿來測試用而已","detect_result": detect_result}
     # data = json.dumps(data)
-    print(data)
-    
+    print(f'回傳給前端的資料{data}')
+
+    # 取得使用者的帳號(email)
+    userAccount = current_user.get_id()
+    # 根據接收到的資料和資料互動，初始化一個可以執行指令的cursor() (資料指標)
+    cursor = mysql.connection.cursor()
+    cursor.execute(f"""SELECT user_name FROM user_data WHERE email = '{userAccount}'""") #cursor.execute 執行資料庫的操作或是查詢動作。一次僅操作一筆資料。
+    user_name = cursor.fetchone()[0] # 該使用者的名字
+    # 把資料放進資料庫(偵測的歷史紀錄)
+    cursor.execute("INSERT INTO history (user_name, email, state, detect_time, img_path) VALUES (%s,%s,%s,%s,%s);",(user_name, userAccount , detect_result, now_time, img_path))
+    mysql.connection.commit()
+    cursor.close()
+
+
     return data
 
 @app.route('/create_table')
+@login_required
 def create_table():
     cursor = mysql.connection.cursor()
 
+    # 使用者資料
     cursor.execute('''CREATE TABLE IF NOT EXISTS user_data (
                     id serial UNIQUE PRIMARY KEY ,
-                    school_id TEXT ,
                     user_name TEXT ,
                     email TEXT ,
                     password TEXT
                     );''')
+    
+    # 偵測的歷史紀錄
+    cursor.execute('''CREATE TABLE IF NOT EXISTS history (
+                id serial UNIQUE PRIMARY KEY ,
+                user_name TEXT ,
+                email TEXT ,
+                state TEXT ,
+                detect_time timestamp ,
+                img_path TEXT
+                );''')
+
+    # # 舊的版本(有學號)
+    # cursor.execute('''CREATE TABLE IF NOT EXISTS user_data (
+    #             id serial UNIQUE PRIMARY KEY ,
+    #             school_id TEXT ,
+    #             user_name TEXT ,
+    #             email TEXT ,
+    #             password TEXT
+    #             );''')
 
     mysql.connection.commit()
     cursor.close()
     return "create success!!"
 
 @app.route('/drop_table')
+@login_required
 def drop_table():
     cursor = mysql.connection.cursor()
-    cursor.execute('DROP TABLE IF EXISTS user_data')
+    # cursor.execute('DROP TABLE IF EXISTS history') #要用時再拿掉註解
     mysql.connection.commit()
     cursor.close()
     return "drop success!!"
 
+# 登入函數
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template('login.html')
     
     #從前端取得使用者的輸入
-    userAccount = request.form['userAccount'] # userAccount 是使用者
+    userAccount = request.form['userAccount'] # userAccount 是使用者輸入的帳號
+    
+    #根據接收到的資料和資料互動，初始化一個可以執行指令的cursor() (資料指標)
+    cursor = mysql.connection.cursor()
+    # 檢查會員集合中是否有相同email的文件資料
+    # print(f"""SELECT *FROM userdata WHERE email = '%s' """ %(email,))
+    cursor.execute(f"""SELECT * FROM user_data WHERE email = '{userAccount}'""") #cursor.execute 執行資料庫的操作或是查詢動作。一次僅操作一筆資料。
+    email_result = cursor.fetchall() # 所有使用者的email
+    print(f"email_result == > {email_result}")
+
+    cursor.execute(f"""SELECT password FROM user_data WHERE email = '{userAccount}'""") #cursor.execute 執行資料庫的操作或是查詢動作。一次僅操作一筆資料。
+    password_result = cursor.fetchone() # 該使用者的密碼
+    print(f"password_result == > {password_result}")
+
+    cursor.execute(f"""SELECT user_name FROM user_data WHERE email = '{userAccount}'""") #cursor.execute 執行資料庫的操作或是查詢動作。一次僅操作一筆資料。
+    user_name = cursor.fetchone() # 該使用者的名字
+    print(f"user_name == > {user_name}")
+
+    if (email_result == ()) or (password_result == None) or (user_name == None):
+        mysql.connection.commit()
+        # 關閉 cursor
+        cursor.close()
+        flash('登入失敗了...')
+        return render_template('login.html')
+    
     # 使用者(user)登入驗證帳號密碼，實務上會從資料庫中取回該帳號使用者並驗證密碼是否正確
-    if (userAccount in users) and (request.form['password'] == users[userAccount]['password']):
+    if (userAccount in email_result[0]) and (request.form['password'] == password_result[0]):
         # 實作User類別
         user = User()
         # 設置id就是使用者帳號(email)
         user.id = userAccount 
         # 透過login_user來記錄user_id, 在經過login_user(user)之後，後面的應用就都可以利用current_user來取得用戶資訊 ref: https://hackmd.io/@shaoeChen/ryvr_ly8f?type=view#login_user
         login_user(user)
-        flash(f'{userAccount}！歡迎使用口罩辨識系統！')
+        flash(f'{user_name[0]}！歡迎使用口罩辨識系統！')
+        mysql.connection.commit()
+        # 關閉 cursor
+        cursor.close()
         # 登入成功，轉址
         return redirect(url_for('index'))
 
+    mysql.connection.commit()
+    # 關閉 cursor
+    cursor.close()
     flash('登入失敗了...')
     return render_template('login.html')
 
@@ -327,7 +481,15 @@ def logout():
     if userAccount == None:
         flash(f'您已登出！')
     else:
-        flash(f'{userAccount}！歡迎下次再來！')
+        #根據接收到的資料和資料互動，初始化一個可以執行指令的cursor() (資料指標)
+        cursor = mysql.connection.cursor()
+        cursor.execute(f"""SELECT user_name FROM user_data WHERE email = '{userAccount}'""") #cursor.execute 執行資料庫的操作或是查詢動作。一次僅操作一筆資料。
+        user_name = cursor.fetchone()[0] # 該使用者的名字
+        mysql.connection.commit()
+        # 關閉 cursor
+        cursor.close()
+        print(f'"{user_name}"歡迎下次再來！') # 印給開發人員看
+        flash(f'"{user_name}"歡迎下次再來！') # 顯示在前端給使用者看
     return redirect(url_for('index'))
     # return render_template('index.html')
 
@@ -339,16 +501,15 @@ def signup():
         return render_template('signup.html')
      
     if request.method == 'POST':
-        school_id = request.form['school_id']
+        # school_id = request.form['school_id']
         user_name = request.form['user_name']
         email = request.form['email']
         password = request.form['password']
         #根據接收到的資料和資料互動，初始化一個可以執行指令的cursor() (資料指標)
         cursor = mysql.connection.cursor()
-        print(school_id,user_name,email,password)
+        print(user_name,email,password)
         # 檢查會員集合中是否有相同email的文件資料
         # print(f"""SELECT *FROM userdata WHERE email = '%s' """ %(email,))
-        print(f'email==>{email}')
         cursor.execute(f"""SELECT * FROM user_data WHERE email = '{email}' """) #cursor.execute 執行資料庫的操作或是查詢動作。一次僅操作一筆資料。
         
         email_result = cursor.fetchall()
@@ -357,21 +518,13 @@ def signup():
             flash('電子郵件已經被註冊過了')
             return redirect("/signup")
         
-        cursor.execute(f"""SELECT * FROM user_data WHERE school_id = '{school_id}' """) #cursor.execute 執行資料庫的操作或是查詢動作。一次僅操作一筆資料。
         
-        school_id_result = cursor.fetchall()
-
-        if school_id_result != ():   #非(取反) ! 本來是true變成flase; 本來是flase變成true !=就是不等於
-            flash('此學號已經被註冊過了')
-            return redirect("/signup")
-        
-        #把資料放進資料庫，完成註冊
-        cursor.execute("INSERT INTO user_data (school_id, user_name, email, password) VALUES (%s,%s,%s,%s);",(school_id, user_name, email ,password))
+        # 把資料放進資料庫，完成註冊
+        cursor.execute("INSERT INTO user_data (user_name, email, password) VALUES (%s,%s,%s);",(user_name, email ,password))
         mysql.connection.commit()
         # 關閉 cursor
         cursor.close()
-        flash(f'"{user_name}"恭喜註冊成功，登入以啟用更多功能!')
-        # return render_template('msg_page.html',register_success=1)
+        flash(f'"{user_name}"恭喜註冊成功，登入可以啟用更多功能喔!')
         return render_template('login.html')
 
 
