@@ -266,10 +266,10 @@ def history():
 
 def return_img_stream(img_local_path):
     """
-    工具函数:
-    获取本地图片流
-    :param img_local_path:文件单张图片的本地绝对路径
-    :return: 图片流
+    工具函數:
+    獲取本地圖片流
+    :param img_local_path:文件單張圖片的本地絕對路徑
+    :return: 圖片流
     reference : https://blog.csdn.net/xyy731121463/article/details/107123635
     """
     import base64
